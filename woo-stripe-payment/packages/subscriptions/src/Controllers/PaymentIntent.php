@@ -64,7 +64,8 @@ class PaymentIntent {
 	 */
 	public function is_subscription_mode( $bool, RequestContext $context ) {
 		if ( ! $bool ) {
-			$is_manual_enabled = wcs_is_manual_renewal_enabled();
+			$is_manual_enabled = function_exists( 'wcs_is_manual_renewal_enabled' )
+			                     && \wcs_is_manual_renewal_enabled();
 
 			// if $is_manual_enabled is enabled then subscription mode isn't needed.
 			if ( ! $is_manual_enabled ) {

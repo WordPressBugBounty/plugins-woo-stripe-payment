@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Payment Plugins for Stripe WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Payment Plugins for Stripe WooCommerce 3.3.78\n"
+"Project-Id-Version: Payment Plugins for Stripe WooCommerce 3.3.80\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-stripe-payment\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-19T21:34:29+00:00\n"
+"POT-Creation-Date: 2024-12-20T00:46:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: woo-stripe-payment\n"
@@ -339,6 +339,10 @@ msgid ""
 "At Stripe's request we have updated how the Stripe for WooCommerce\n"
 "                                    plugin integrates with Stripe. This new integration offers even more security and \n"
 "                                    Stripe is requesting that all merchants switch. %1$sUpdate Integration%2$s"
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-product-edit.php:14
+msgid "Delete Stripe Options"
 msgstr ""
 
 #: includes/admin/class-wc-stripe-admin-settings.php:71
@@ -827,6 +831,7 @@ msgid "We make it easy to connect Stripe to your site. Click the Connect button 
 msgstr ""
 
 #: includes/admin/settings/class-wc-stripe-api-settings.php:87
+#: includes/admin/settings/class-wc-stripe-api-settings.php:417
 msgid "Test Publishable Key"
 msgstr ""
 
@@ -835,6 +840,7 @@ msgid "Your publishable key is used to initialize Stripe assets."
 msgstr ""
 
 #: includes/admin/settings/class-wc-stripe-api-settings.php:99
+#: includes/admin/settings/class-wc-stripe-api-settings.php:409
 msgid "Test Secret Key"
 msgstr ""
 
@@ -917,6 +923,14 @@ msgstr ""
 
 #: includes/admin/settings/class-wc-stripe-api-settings.php:298
 msgid "Your Stripe account has been connected to your WooCommerce store. You may now accept payments in Live and Test mode."
+msgstr ""
+
+#: includes/admin/settings/class-wc-stripe-api-settings.php:409
+msgid "Live mode keys are not allowed in the \"%s field."
+msgstr ""
+
+#: includes/admin/settings/class-wc-stripe-api-settings.php:417
+msgid "Live mode keys are not allowed in the \"%s\" field."
 msgstr ""
 
 #: includes/admin/views/html-ach-fee.php:20
@@ -1927,18 +1941,18 @@ msgstr ""
 msgid "Credit card gateway that integrates with your Stripe account."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:93
+#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:95
 #: includes/gateways/class-wc-payment-gateway-stripe-upm.php:142
 #: packages/blocks/src/Payments/Gateways/CreditCardPayment.php:113
 #: packages/blocks/src/Payments/Gateways/UniversalPayment.php:88
 msgid "Loading installments..."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:319
+#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:321
 msgid "Only the Stripe payment form and inline form can be used while Link is enabled."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:330
+#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:332
 #: packages/blocks/src/Payments/Gateways/CreditCardPayment.php:47
 msgid "Save Card"
 msgstr ""
