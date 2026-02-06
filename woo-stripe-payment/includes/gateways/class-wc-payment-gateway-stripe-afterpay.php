@@ -10,7 +10,7 @@ if ( ! class_exists( 'WC_Payment_Gateway_Stripe_Local_Payment' ) ) {
  * Class WC_Payment_Gateway_Stripe_Afterpay
  *
  * @since   3.3.1
- * @package Stripe/Gateways
+ * @package PaymentPlugins\Gateways
  */
 class WC_Payment_Gateway_Stripe_Afterpay extends WC_Payment_Gateway_Stripe_Local_Payment {
 
@@ -455,9 +455,9 @@ class WC_Payment_Gateway_Stripe_Afterpay extends WC_Payment_Gateway_Stripe_Local
 
 	public function get_required_parameters() {
 		return apply_filters( 'wc_stripe_afterpay_get_required_parameters', array(
-			'AUD' => array( 'AU', 1, 2000 ),
+			'AUD' => array( 'AU', 1, 4000 ),
 			'CAD' => array( 'CA', 1, 2000 ),
-			'NZD' => array( 'NZ', 1, 2000 ),
+			'NZD' => array( 'NZ', 1, 4000 ),
 			'GBP' => array( 'GB', 1, 1200 ),
 			'USD' => array( 'US', 1, 4000 )
 		), $this );
