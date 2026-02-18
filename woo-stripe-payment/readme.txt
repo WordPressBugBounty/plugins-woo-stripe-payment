@@ -4,7 +4,7 @@ Tags: stripe, klarna, credit card, apple pay, google pay
 Requires at least: 3.0.1
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.3.101
+Stable tag: 3.3.102
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,9 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 3.3.102 - 02/18/26 =
+* Fixed - Syntax errors in the Admin option setting descriptions
+* Fixed - JS error for Apple Pay and GPay via Payment Request Gateway when side cart button clicked on product page
 = 3.3.101 - 02/02/26 =
 * Fixed - Apple Pay was showing on some unsupported devices combined with plugins like Funnelkit
 * Fixed - Checkout block express section appeared disabled due to a bug in WooCommerce. We have added a resolution in this plugin so merchants don't have to wait.
