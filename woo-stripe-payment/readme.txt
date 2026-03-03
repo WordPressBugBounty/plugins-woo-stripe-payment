@@ -4,7 +4,7 @@ Tags: stripe, klarna, credit card, apple pay, google pay
 Requires at least: 3.0.1
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.3.102
+Stable tag: 3.3.103
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,11 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 3.3.103 - 03/03/26 =
+* Fixed - Improved handling of Apple Pay redacted postal code for "GB" and "CA" country codes. [https://wordpress.org/support/topic/uk-postcode-wildcard-shipping-zones-to-fail-with-apple-pay/](https://wordpress.org/support/topic/uk-postcode-wildcard-shipping-zones-to-fail-with-apple-pay/)
+* Added - The statement descriptor option in the Advanced Settings page now supports dynamic variables like order_id, order_number. [Documentation](https://paymentplugins.com/documentation/stripe/advanced-settings/#statement-descriptor)
+* Added - For card payments, a new "statement descriptor suffix" option has been added to the Advanced Settings page. This option also supports dynamic variables. [Documentation](https://paymentplugins.com/documentation/stripe/advanced-settings/#statement-descriptor-suffix)
+* Updated - If a local payment method return url is revisited, ensure the order notes are not duplicated
 = 3.3.102 - 02/18/26 =
 * Fixed - Syntax errors in the Admin option setting descriptions
 * Fixed - JS error for Apple Pay and GPay via Payment Request Gateway when side cart button clicked on product page

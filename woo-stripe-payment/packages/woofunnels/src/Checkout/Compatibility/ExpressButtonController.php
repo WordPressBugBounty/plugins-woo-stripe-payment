@@ -56,7 +56,8 @@ class ExpressButtonController {
 		return [
 			'stripe_googlepay'       => GooglePay::class,
 			'stripe_applepay'        => ApplePay::class,
-			'stripe_payment_request' => PaymentRequest::class
+			'stripe_payment_request' => PaymentRequest::class,
+			'stripe_link_checkout'   => LinkCheckout::class
 		];
 	}
 
@@ -76,7 +77,10 @@ class ExpressButtonController {
 			$buttons[ $this->id ] = [
 				'iframe' => true
 			];
-			remove_action( 'woocommerce_checkout_before_customer_details', [ \WC_Stripe_Field_Manager::class, 'output_banner_checkout_fields' ] );
+			remove_action( 'woocommerce_checkout_before_customer_details', [
+				\WC_Stripe_Field_Manager::class,
+				'output_banner_checkout_fields'
+			] );
 		}
 
 		return $buttons;
@@ -89,6 +93,12 @@ class ExpressButtonController {
                 <li class="wc-stripe-checkout-banner-gateway banner_payment_method_<?php echo $gateway->get_payment_gateway()->id ?>">
 
                 </li>
+				<?php if ( $gateway->get_id() === 'stripe_link_checkout' ) {
+					$gateway = WC()->payment_gateways()->payment_gateways()[ $gateway->get_id() ] ?? null;
+					if ( $gateway ) {
+						$gateway->enqueue_express_checkout_scripts();
+					}
+				} ?>
 			<?php endforeach; ?>
         </ul>
 		<?php
