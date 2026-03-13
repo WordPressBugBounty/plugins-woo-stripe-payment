@@ -124,6 +124,7 @@ class WC_Stripe_Controller_Cart extends WC_Stripe_Rest_Controller {
 				$this->empty_cart( WC()->cart );
 				WC()->cart->add_to_cart( ...array_values( $this->get_add_to_cart_args( $request ) ) );
 			}
+			$this->add_postcode_format_filter( WC()->customer->get_shipping_country() );
 			WC()->cart->calculate_totals();
 
 			$cart = ( new \PaymentPlugins\Stripe\Transformers\DataTransformer() )->transform_cart( WC()->cart );

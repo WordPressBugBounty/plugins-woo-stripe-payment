@@ -884,7 +884,7 @@
 
     wc_stripe.CheckoutGateway = function () {
         this.message_container = 'li.payment_method_' + this.gateway_id;
-        this.banner_container = 'li.banner_payment_method_' + this.gateway_id;
+        this.banner_container = '.banner_payment_method_' + this.gateway_id;
         $(document.body).on('update_checkout', this.update_checkout.bind(this));
         $(document.body).on('updated_checkout', this.updated_checkout.bind(this));
         $(document.body).on('updated_checkout', this.container_styles.bind(this));
