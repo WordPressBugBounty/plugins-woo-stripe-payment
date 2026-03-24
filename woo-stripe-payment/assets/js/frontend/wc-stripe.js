@@ -1384,7 +1384,7 @@
 
     wc_stripe.ProductGateway.prototype.get_product_variations = function () {
         var variation = this.get_product_data().variation;
-        var attributes = variation ? variation.attributes : {};
+        var attributes = variation ? Object.assign({}, variation.attributes) : {};
         if (this.is_variable_product()) {
             $('.variations [name^="attribute_"]').each(function (index, el) {
                 var $el = $(el);

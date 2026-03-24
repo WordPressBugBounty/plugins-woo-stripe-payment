@@ -4,7 +4,7 @@ Tags: stripe, klarna, credit card, apple pay, google pay
 Requires at least: 3.0.1
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.3.104
+Stable tag: 3.3.105
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,8 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 3.3.105 - 03/24/26 =
+* Fixed - Issue on variation pages where variations were reset for "Any" attribute. [https://wordpress.org/support/topic/bug-variation-dropdowns-for-any-attributes-are-being-reset/](https://wordpress.org/support/topic/bug-variation-dropdowns-for-any-attributes-are-being-reset/)
 = 3.3.104 - 03/13/26 =
 * Added - WC Tested to 10.6
 * Fixed - On the Edit Product page > Stripe Settings panel, if payment method is disabled globally, ensure settings reflect that
