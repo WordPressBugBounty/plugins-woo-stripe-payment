@@ -2,9 +2,9 @@
 Contributors: paymentplugins, mrclayton
 Tags: stripe, klarna, credit card, apple pay, google pay
 Requires at least: 3.0.1
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 3.3.105
+Stable tag: 3.3.106
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,9 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 3.3.106 - 04/08/26 =
+* Fixed - [MBWay Javascript error when payment cancelled](https://wordpress.org/support/topic/mb-way-via-upm-throws-javascript-error-when-customer-cancels-payment/)
+* Fixed - PHP notice triggered when iDEAL used for a free trial subscription
 = 3.3.105 - 03/24/26 =
 * Fixed - Issue on variation pages where variations were reset for "Any" attribute. [https://wordpress.org/support/topic/bug-variation-dropdowns-for-any-attributes-are-being-reset/](https://wordpress.org/support/topic/bug-variation-dropdowns-for-any-attributes-are-being-reset/)
 = 3.3.104 - 03/13/26 =
