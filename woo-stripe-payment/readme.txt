@@ -1,10 +1,10 @@
 === Payment Plugins for Stripe WooCommerce ===
 Contributors: paymentplugins, mrclayton
 Tags: stripe, klarna, credit card, apple pay, google pay
-Requires at least: 3.0.1
+Requires at least: 4.7
 Tested up to: 7.0
-Requires PHP: 5.6
-Stable tag: 3.3.108
+Requires PHP: 7.4
+Stable tag: 4.0.0
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,8 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 4.0.0 - 06/22/26 =
+= [Change Log](https://paymentplugins.com/documentation/stripe/releases/4.0.0/)
 = 3.3.108 - 05/15/26 =
 * Updated - Add currency check to checkout block because sometimes the currency provided by WooCommerce is a non-valid value
 * Fixed - A recent change in the Stripe JS SDK was resulting in Link showing in the payment element even if "Faster checkout with link" was disabled
