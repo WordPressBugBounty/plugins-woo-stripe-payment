@@ -329,7 +329,7 @@ class WC_Stripe_Advanced_Settings extends WC_Stripe_Settings_API {
 
 	/**
 	 * @return void
-	 * @3.3.99
+	 * @since 3.3.99
 	 */
 	public function get_terms_display_rule() {
 		$value = stripe_wc()->advanced_settings->get_option( 'terms_enabled', 'no' );

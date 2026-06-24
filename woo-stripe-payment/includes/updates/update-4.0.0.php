@@ -8,18 +8,19 @@ defined( 'ABSPATH' ) || exit();
 // change button_color to button_theme
 
 if ( function_exists( 'WC' ) ) {
+	$payment_gateways = WC()->payment_gateways()->payment_gateways();
 	/**
 	 * @var \WC_Payment_Gateway_Stripe $googlepay
 	 */
-	$googlepay = WC()->payment_gateways()->payment_gateways()['stripe_googlepay'] ?? null;
+	$googlepay = $payment_gateways['stripe_googlepay'] ?? null;
 	/**
 	 * @var \WC_Payment_Gateway_Stripe $applepay
 	 */
-	$applepay = WC()->payment_gateways()->payment_gateways()['stripe_applepay'] ?? null;
+	$applepay = $payment_gateways['stripe_applepay'] ?? null;
 	/**
 	 * @var \WC_Payment_Gateway_Stripe $payment_request_gateway
 	 */
-	$payment_request_gateway = WC()->payment_gateways()->payment_gateways()['stripe_payment_request'] ?? null;
+	$payment_request_gateway = $payment_gateways['stripe_payment_request'] ?? null;
 
 	if ( $googlepay ) {
 		$googlepay->settings['button_theme'] = $googlepay->get_option( 'button_color', 'black' );
@@ -60,7 +61,7 @@ if ( function_exists( 'WC' ) ) {
 	// a default.
 	$gateways = [ 'stripe_applepay', 'stripe_googlepay', 'stripe_link_checkout', 'stripe_payment_request' ];
 	foreach ( $gateways as $id ) {
-		$gateway = WC()->payment_gateways()->payment_gateways()[ $id ] ?? null;
+		$gateway = $payment_gateways[ $id ] ?? null;
 		/**
 		 * @var \WC_Payment_Gateway_Stripe $gateway
 		 */
@@ -84,21 +85,37 @@ if ( function_exists( 'WC' ) ) {
 
 	// enable bnpl messaging if payment_sections isn't empty
 	$bnpl_gateways = [ 'stripe_affirm', 'stripe_afterpay', 'stripe_klarna' ];
-	foreach ( $gateways as $id ) {
-		$gateway = WC()->payment_gateways()->payment_gateways()[ $id ] ?? null;
+	foreach ( $bnpl_gateways as $id ) {
+		$gateway = $payment_gateways[ $id ] ?? null;
 		/**
 		 * @var \WC_Payment_Gateway_Stripe $gateway
 		 */
 		if ( $gateway ) {
-			$sections = $gateway->get_option( 'payment_sections', [] );
+			/**
+			 * 1. Check if gateway is enabled
+			 * 2. If not enabled, check if it's enabled in the UPM.
+			 * 3. If 1 or 2 is true, then set "message_enabled" to true.
+			 */
+			/**
+			 * @var WC_Payment_Gateway_Stripe_UPM $universal_payment_method
+			 */
+			$universal_payment_method = $payment_gateways['stripe_upm'] ?? null;
+			$upm_enabled              = $universal_payment_method && wc_string_to_bool( $universal_payment_method->enabled ) && $universal_payment_method->is_enabled_payment_method( $gateway->id );
+			$sections                 = $gateway->get_option( 'payment_sections', [] );
 			if ( ! empty( $sections ) ) {
-				$gateway->update_option( 'message_enabled', 'yes' );
+				if ( $gateway->enabled === 'yes' || $upm_enabled ) {
+					$gateway->update_option( 'message_enabled', 'yes' );
+				} else {
+					$gateway->update_option( 'message_enabled', 'no' );
+				}
+			} else {
+				$gateway->update_option( 'message_enabled', 'no' );
 			}
 		}
 	}
 
 	// update the payment method configurations for UPM
-	$upm = WC()->payment_gateways()->payment_gateways()['stripe_upm'] ?? null;
+	$upm = $payment_gateways['stripe_upm'] ?? null;
 	if ( $upm ) {
 		/**
 		 * @var WC_Payment_Gateway_Stripe_UPM $upm
@@ -118,7 +135,7 @@ if ( function_exists( 'WC' ) ) {
 	}
 
 	// Create the new icon_url
-	$stripe_cc = WC()->payment_gateways()->payment_gateways()['stripe_cc'] ?? null;
+	$stripe_cc = $payment_gateways['stripe_cc'] ?? null;
 	if ( $stripe_cc ) {
 		$cards = $stripe_cc->get_option( 'cards', [] );
 		if ( $cards ) {

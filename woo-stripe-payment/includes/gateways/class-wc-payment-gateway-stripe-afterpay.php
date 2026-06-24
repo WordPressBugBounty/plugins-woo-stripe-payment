@@ -77,7 +77,7 @@ class WC_Payment_Gateway_Stripe_Afterpay extends WC_Payment_Gateway_Stripe_Local
 			'message_enabled'  => array(
 				'title'       => __( 'Messaging Enabled', 'woo-stripe-payment' ),
 				'type'        => 'checkbox',
-				'default'     => 'yes',
+				'default'     => 'no',
 				'desc_tip'    => true,
 				'description' => __( 'When enabled, the Buy Now Pay Later messaging will be available in the sections you configure.', 'woo-stripe-payment' ),
 			),

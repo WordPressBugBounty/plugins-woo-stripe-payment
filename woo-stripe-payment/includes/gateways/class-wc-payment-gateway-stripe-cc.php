@@ -348,7 +348,7 @@ class WC_Payment_Gateway_Stripe_CC extends WC_Payment_Gateway_Stripe {
 		$uploads = wp_upload_dir( current_time( 'mysql' ) );
 		$file    = $uploads['path'] . '/stripe-card-icons.svg';
 		if ( $wp_filesystem->put_contents( $file, $svg ) ) {
-			$this->settings['icon_url'] = $uploads['url'] . '/stripe-card-icons.svg';
+			$this->settings['icon_url'] = $uploads['url'] . '/stripe-card-icons.svg?ver=' . uniqid();
 		}
 
 		return $value;

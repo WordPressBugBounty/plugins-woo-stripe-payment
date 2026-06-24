@@ -139,7 +139,7 @@ class WC_Payment_Gateway_Stripe_Klarna extends WC_Payment_Gateway_Stripe_Local_P
 		$this->method_title       = __( 'Klarna (Stripe) by Payment Plugins', 'woo-stripe-payment' );
 		$this->method_description = __( 'Klarna gateway that integrates with your Stripe account.', 'woo-stripe-payment' );
 		parent::__construct( ...$args );
-		$this->icon               = $this->assets->assets_url( 'img/' . $this->get_option( 'icon' ) . '.svg' );
+		$this->icon = $this->assets->assets_url( 'img/' . $this->get_option( 'icon' ) . '.svg' );
 	}
 
 	public function get_required_parameters() {
@@ -289,7 +289,7 @@ class WC_Payment_Gateway_Stripe_Klarna extends WC_Payment_Gateway_Stripe_Local_P
 				'message_enabled'  => array(
 					'title'       => __( 'Messaging Enabled', 'woo-stripe-payment' ),
 					'type'        => 'checkbox',
-					'default'     => 'yes',
+					'default'     => 'no',
 					'desc_tip'    => true,
 					'description' => __( 'When enabled, the Buy Now Pay Later messaging will be available in the sections you configure.', 'woo-stripe-payment' ),
 				),
