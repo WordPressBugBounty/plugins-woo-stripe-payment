@@ -83,7 +83,7 @@ class WC_Stripe_Product_Gateway_Option {
 	 */
 	public function get_default_values() {
 		if ( $this->payment_method->supports( 'stripe_bnpl_msg' ) ) {
-			$payment_sections = (array) $this->payment_method->get_option( 'payment_sections', [] );
+			$payment_sections = (array) $this->payment_method->get_option( 'message_sections', [] );
 			if ( ! is_array( $payment_sections ) ) {
 				$payment_sections = array();
 			}

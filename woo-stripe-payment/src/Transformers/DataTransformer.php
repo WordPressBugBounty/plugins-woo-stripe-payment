@@ -46,7 +46,7 @@ class DataTransformer {
 	 *
 	 * @return array
 	 */
-	public function transform_product( $product ) {
+	public function transform_product( $product, $args = [] ) {
 		$currency = get_woocommerce_currency();
 		$price    = floatval( NumberUtil::round( wc_get_price_to_display( $product ), 2 ) );
 		$data     = [
@@ -64,29 +64,39 @@ class DataTransformer {
 			'variation_id'    => 0,
 		];
 
-		// If variable product, try to get default variation to populate price/stock/shipping
+		// If variable product, resolve the active variation to populate price/stock/shipping.
+		// Uses $_REQUEST-derived attributes passed from AssetDataController (mirrors WooCommerce's
+		// own dropdown pre-fill logic), falling back to the product's default attributes.
 		if ( $product->get_type() === 'variable' ) {
-			$meta_attribute_names = [];
-			$default_attributes   = $product->get_default_attributes();
-			foreach ( $default_attributes as $key => $attribute ) {
-				$meta_attribute_names[ 'attribute_' . sanitize_title( $key ) ] = $attribute;
+			$selected_attributes = $args['selected_attributes'] ?? [];
+
+			if ( empty( $selected_attributes ) ) {
+				foreach ( $product->get_default_attributes() as $key => $attribute ) {
+					$selected_attributes[ 'attribute_' . sanitize_title( $key ) ] = $attribute;
+				}
 			}
 
-			if ( ! empty( $default_attributes ) ) {
+			if ( ! empty( $selected_attributes ) ) {
 				$data_store   = \WC_Data_Store::load( 'product' );
-				$variation_id = $data_store->find_matching_product_variation( $product, $meta_attribute_names );
+				$variation_id = $data_store->find_matching_product_variation( $product, $selected_attributes );
 
 				if ( $variation_id ) {
 					$variation = wc_get_product( $variation_id );
 					if ( $variation ) {
-						// Update with variation-specific data
-						$data['price']         = NumberUtil::round( wc_get_price_to_display( $variation ), 2 );
-						$data['total']         = NumberUtil::round( $variation->get_price(), 2 );
-						$data['totalCents']    = wc_stripe_add_number_precision( $variation->get_price(), $currency );
-						$data['isInStock']     = $variation->is_in_stock();
-						$data['needsShipping'] = $variation->needs_shipping();
-						$data['lineItems']     = $this->get_line_items_from_product( $variation );
-						$data['variation_id']  = $variation_id;
+						ksort( $selected_attributes );
+						$pairs = [];
+						foreach ( $selected_attributes as $k => $v ) {
+							$pairs[] = $k . ':' . $v;
+						}
+						$data['price']          = NumberUtil::round( wc_get_price_to_display( $variation ), 2 );
+						$data['total']          = NumberUtil::round( $variation->get_price(), 2 );
+						$data['totalCents']     = wc_stripe_add_number_precision( $variation->get_price(), $currency );
+						$data['isInStock']      = $variation->is_in_stock();
+						$data['needsShipping']  = $variation->needs_shipping();
+						$data['lineItems']      = $this->get_line_items_from_product( $variation );
+						$data['variation_id']   = $variation_id;
+						$data['attributes']     = $selected_attributes;
+						$data['attributesHash'] = implode( '|', $pairs );
 					}
 				}
 			}
@@ -195,6 +205,7 @@ class DataTransformer {
 				? wc_get_price_including_tax( $product, [ 'qty' => $qty ] )
 				: wc_get_price_excluding_tax( $product, [ 'qty' => $qty ] );
 			$items[] = [
+				'id'          => $product->get_id(),
 				'label'       => $label,
 				'amount'      => NumberUtil::round( $price, 2 ),
 				'amountCents' => wc_stripe_add_number_precision( $price, $currency ),

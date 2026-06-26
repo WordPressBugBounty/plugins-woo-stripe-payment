@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('wc-stripe-core-vendors', ), 'version' => '9d77c9a3762257a9a61f');
+<?php return array('dependencies' => array(), 'version' => '00c401836ee5703018e4');

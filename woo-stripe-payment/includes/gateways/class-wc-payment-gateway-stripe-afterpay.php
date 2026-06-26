@@ -29,7 +29,7 @@ class WC_Payment_Gateway_Stripe_Afterpay extends WC_Payment_Gateway_Stripe_Local
 		$this->method_title       = __( 'Afterpay (Stripe) by Payment Plugins', 'woo-stripe-payment' );
 		$this->method_description = __( 'Afterpay gateway that integrates with your Stripe account.', 'woo-stripe-payment' );
 		parent::__construct( ...$args );
-		$this->icon               = stripe_wc()->assets_url( 'img/afterpay.svg' );
+		$this->icon = stripe_wc()->assets_url( 'img/afterpay.svg' );
 	}
 
 	public function get_order_button_text( $text ) {
@@ -81,7 +81,7 @@ class WC_Payment_Gateway_Stripe_Afterpay extends WC_Payment_Gateway_Stripe_Local
 				'desc_tip'    => true,
 				'description' => __( 'When enabled, the Buy Now Pay Later messaging will be available in the sections you configure.', 'woo-stripe-payment' ),
 			),
-			'payment_sections' => array(
+			'message_sections' => array(
 				'type'        => 'multiselect',
 				'title'       => __( 'Message Sections', 'woo-stripe-payment' ),
 				'class'       => 'wc-enhanced-select',

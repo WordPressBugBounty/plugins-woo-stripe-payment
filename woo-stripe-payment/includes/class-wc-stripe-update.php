@@ -34,6 +34,7 @@ class WC_Stripe_Update {
 			'3.3.97' => 'update-3.3.97.php',
 			'4.0.0'  => 'update-4.0.0.php',
 			'4.0.1'  => 'update-4.0.1.php',
+			'4.0.2'  => 'update-4.0.2.php',
 		);
 
 	public static function init() {

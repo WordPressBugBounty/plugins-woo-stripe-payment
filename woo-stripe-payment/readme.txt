@@ -4,7 +4,7 @@ Tags: stripe, klarna, credit card, apple pay, google pay
 Requires at least: 4.7
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 4.0.1
+Stable tag: 4.0.2
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,8 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 4.0.2 - 06/26/26 =
+* [4.0.2 Change Log](https://paymentplugins.com/documentation/stripe/releases/4.0.2/)
 = 4.0.1 - 06/24/26 =
 * [4.0.1 Change Log](https://paymentplugins.com/documentation/stripe/releases/4.0.1/)
 * Fixed - In the version 4.0.0 update, BNPL messaging could have been enabled via the "Messaging Enabled" option even if messaging was not enabled in version 3.3.108. BNPL messaging can be disabled

@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('wc-stripe-core-vendors', 'jquery', 'wc-stripe-actions', 'wc-stripe-utils'), 'version' => '50ca689752eebc96f4ea');
+<?php return array('dependencies' => array('jquery', 'wc-stripe-actions', 'wc-stripe-utils'), 'version' => '8c1eb320384026965d72');

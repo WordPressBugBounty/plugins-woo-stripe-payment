@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('wc-stripe-dom-events', 'jquery', 'wc-stripe-actions', 'wc-stripe-cart', 'wc-stripe-product', 'wc-stripe-sdk', 'wc-stripe-utils'), 'version' => '850958a8ac50b9dda933');
+<?php return array('dependencies' => array('wc-stripe-dom-events', 'jquery', 'wc-stripe-actions', 'wc-stripe-cart', 'wc-stripe-product', 'wc-stripe-sdk', 'wc-stripe-utils'), 'version' => '920bf1cf04ac243fd032');

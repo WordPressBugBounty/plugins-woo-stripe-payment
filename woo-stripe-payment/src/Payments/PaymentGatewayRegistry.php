@@ -142,10 +142,13 @@ class PaymentGatewayRegistry extends BaseRegistry {
 			}
 
 			if ( $context->is_product() ) {
-				$enabled = $gateway->is_product_section_enabled( $context->get_product_id() );
-				if ( ! $enabled ) {
+				if ( ! $gateway->is_product_section_enabled( $context->get_product_id() ) ) {
 					continue;
 				}
+				if ( \wc_string_to_bool( $gateway->get_option( 'message_enabled', 'yes' ) ) ) {
+					$gateways[ $gateway->id ] = $gateway;
+				}
+				continue;
 			}
 
 			$enabled = \wc_string_to_bool( $gateway->get_option( 'message_enabled', 'yes' ) );
@@ -154,7 +157,7 @@ class PaymentGatewayRegistry extends BaseRegistry {
 			}
 
 			if ( $section ) {
-				$payment_sections = $gateway->get_option( 'payment_sections', [] );
+				$payment_sections = $gateway->get_option( 'message_sections', [] );
 				if ( ! is_array( $payment_sections ) ) {
 					$payment_sections = [];
 				}

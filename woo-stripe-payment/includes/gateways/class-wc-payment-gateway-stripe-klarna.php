@@ -293,7 +293,7 @@ class WC_Payment_Gateway_Stripe_Klarna extends WC_Payment_Gateway_Stripe_Local_P
 					'desc_tip'    => true,
 					'description' => __( 'When enabled, the Buy Now Pay Later messaging will be available in the sections you configure.', 'woo-stripe-payment' ),
 				),
-				'payment_sections' => array(
+				'message_sections' => array(
 					'type'        => 'multiselect',
 					'title'       => __( 'Message Sections', 'woo-stripe-payment' ),
 					'class'       => 'wc-enhanced-select',

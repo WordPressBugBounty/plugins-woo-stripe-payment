@@ -173,7 +173,21 @@ class AssetDataController {
 			if ( $product instanceof \WP_Post && $product->post_type === 'product' ) {
 				$product = wc_get_product( $product->ID );
 			}
-			$this->asset_data->add( 'product', $this->transformer->transform_product( $product ) );
+			$args = [];
+				if ( $product instanceof \WC_Product_Variable ) {
+					$selected_attributes = [];
+					foreach ( array_keys( $product->get_variation_attributes() ) as $attribute_name ) {
+						$attribute_key = 'attribute_' . sanitize_title( $attribute_name );
+						// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						if ( isset( $_REQUEST[ $attribute_key ] ) ) {
+							$selected_attributes[ $attribute_key ] = wc_clean( wp_unslash( $_REQUEST[ $attribute_key ] ) );
+						}
+					}
+					if ( ! empty( $selected_attributes ) ) {
+						$args['selected_attributes'] = $selected_attributes;
+					}
+				}
+				$this->asset_data->add( 'product', $this->transformer->transform_product( $product, $args ) );
 		}
 
 		if ( $this->context->is_order_pay() ) {

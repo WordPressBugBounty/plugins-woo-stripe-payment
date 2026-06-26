@@ -58,8 +58,14 @@ class CartCalculation extends AbstractCart {
 		$variation_id  = $request->get_param( 'variation_id' );
 		$variation     = $this->get_variation_data( $request );
 		$cart_item_key = null;
+		// Use a unique cart ID so our temporary item gets its own key even if the same product/variation
+		// is already in the cart. Without this, add_to_cart() returns the existing item's key and the
+		// finally block would remove the customer's real cart item instead of our temporary one.
+		$filter_fn = function ( $cart_id ) {
+			return $cart_id . '_wc_stripe_calculation';
+		};
 		try {
-			// Add product to cart and store the key
+			add_filter( 'woocommerce_cart_id', $filter_fn );
 			$cart_item_key = WC()->cart->add_to_cart( $product_id, $qty, $variation_id, $variation );
 
 			if ( ! $cart_item_key ) {
@@ -83,6 +89,7 @@ class CartCalculation extends AbstractCart {
 		} catch ( \Exception $e ) {
 			wc_stripe_log_error( sprintf( 'Error performing cart calculation: %s', $e->getMessage() ) );
 		} finally {
+			remove_filter( 'woocommerce_cart_id', $filter_fn );
 			// Always remove the item we added
 			if ( $cart_item_key ) {
 				// cart totals are re-calculated when an item is removed from the cart.

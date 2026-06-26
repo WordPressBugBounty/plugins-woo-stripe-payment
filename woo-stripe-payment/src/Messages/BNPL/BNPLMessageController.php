@@ -11,7 +11,7 @@ use PaymentPlugins\Stripe\Payments\PaymentGatewayRegistry;
  * Handles BNPL messaging across all page contexts (product, cart, checkout, shop).
  *
  * Queries the PaymentGatewayRegistry for gateways that support 'stripe_bnpl_msg',
- * checks each gateway's payment_sections setting to determine if messaging is
+ * checks each gateway's message_sections setting to determine if messaging is
  * enabled for the current page, then renders DOM containers and enqueues scripts.
  *
  * @since 4.0.0
