@@ -65,7 +65,7 @@ class ContextHandler {
 				} else {
 					$this->context = self::CHECKOUT;
 				}
-			} elseif ( is_payment_methods_page() ) {
+			} elseif ( function_exists( 'is_payment_methods_page' ) && is_payment_methods_page() ) {
 				$this->context = self::PAYMENT_METHODS;
 			} elseif ( is_add_payment_method_page() ) {
 				$this->context = self::ADD_PAYMENT_METHOD;
