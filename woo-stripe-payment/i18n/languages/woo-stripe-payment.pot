@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Payment Plugins for Stripe WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.6\n"
+"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-stripe-payment\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-08T15:23:14+00:00\n"
+"POT-Creation-Date: 2026-07-12T18:05:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-stripe-payment\n"
@@ -117,23 +117,23 @@ msgstr ""
 msgid "When the billing country matches one of these values, the payment method will be shown on the checkout page."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:293
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:292
 #, php-format
 msgid "Gateway will appear when store currency is <strong>%s</strong>"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:296
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:295
 #, php-format
 msgid " & billing country is not <strong>%s</strong>"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:298
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:301
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:297
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:300
 #, php-format
 msgid " & billing country is <strong>%s</strong>"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:325
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:324
 #, php-format
 msgid "Pay with %s"
 msgstr ""
@@ -195,37 +195,37 @@ msgstr ""
 msgid "Order %1$s from %2$s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1050
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1052
 msgid "Cannot process payment"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1058
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1060
 #, php-format
 msgid "Increase your conversion rate by offering %1$s on your Product and Cart pages, or at the top of the checkout page. <br/><strong>Note:</strong> you can control which products display %s by going to the product edit page."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1135
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1166
-#: src/Transformers/DataTransformer.php:224
-#: src/Transformers/DataTransformer.php:294
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1137
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1168
+#: src/Transformers/DataTransformer.php:206
+#: src/Transformers/DataTransformer.php:276
 msgid "Shipping"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1143
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1169
-#: src/Transformers/DataTransformer.php:248
-#: src/Transformers/DataTransformer.php:305
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1145
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1171
+#: src/Transformers/DataTransformer.php:230
+#: src/Transformers/DataTransformer.php:287
 msgid "Discount"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1146
-#: src/Transformers/DataTransformer.php:258
-#: src/Transformers/DataTransformer.php:329
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1148
+#: src/Transformers/DataTransformer.php:240
+#: src/Transformers/DataTransformer.php:311
 msgid "Tax"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1176
-#: src/Transformers/DataTransformer.php:319
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1178
+#: src/Transformers/DataTransformer.php:301
 msgid "Fees"
 msgstr ""
 
@@ -3351,7 +3351,7 @@ msgid "Pre-order payment authorized in Stripe. Payment method: %s"
 msgstr ""
 
 #: packages/preorders/src/PreOrdersController.php:88
-#: packages/subscriptions/src/SubscriptionsController.php:151
+#: packages/subscriptions/src/SubscriptionsController.php:162
 #, php-format
 msgid "Customer must manually complete payment for payment method %s"
 msgstr ""
@@ -3368,30 +3368,30 @@ msgstr ""
 msgid "Invalid order key."
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:120
+#: packages/subscriptions/src/SubscriptionsController.php:131
 #, php-format
 msgid "Recurring payment for order failed. Reason: %s"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:137
+#: packages/subscriptions/src/SubscriptionsController.php:148
 msgid "Renewal payment initiated in Stripe. Waiting for the payment to clear."
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:141
+#: packages/subscriptions/src/SubscriptionsController.php:152
 #, php-format
 msgid "Recurring payment captured in Stripe. Payment method: %s"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:145
+#: packages/subscriptions/src/SubscriptionsController.php:156
 #, php-format
 msgid "Recurring payment authorized in Stripe. Payment method: %s"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:296
+#: packages/subscriptions/src/SubscriptionsController.php:307
 msgid "Payment Method Token"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:300
+#: packages/subscriptions/src/SubscriptionsController.php:311
 msgid "Stripe Customer ID"
 msgstr ""
 

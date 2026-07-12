@@ -148,15 +148,12 @@ class DataTransformer {
 	 */
 	public function transform_customer( $customer ) {
 		return [
-			'customer_id'      => $customer->get_id(),
-			'billing_address'  => [
+			'billing_address' => [
 				'name'       => sprintf(
 					'%1$s %2$s',
 					$customer->get_billing_first_name(),
 					$customer->get_billing_last_name()
 				),
-				'first_name' => $customer->get_billing_first_name(),
-				'last_name'  => $customer->get_billing_last_name(),
 				'email'      => $customer->get_billing_email(),
 				'phone'      => $customer->get_billing_phone(),
 				'address_1'  => $customer->get_billing_address_1(),
@@ -166,21 +163,6 @@ class DataTransformer {
 				'postcode'   => $customer->get_billing_postcode(),
 				'country'    => $customer->get_billing_country(),
 			],
-			'shipping_address' => [
-				'name'       => sprintf(
-					'%1$s %2$s',
-					$customer->get_shipping_first_name(),
-					$customer->get_shipping_last_name()
-				),
-				'first_name' => $customer->get_shipping_first_name(),
-				'last_name'  => $customer->get_shipping_last_name(),
-				'address_1'  => $customer->get_shipping_address_1(),
-				'address_2'  => $customer->get_shipping_address_2(),
-				'city'       => $customer->get_shipping_city(),
-				'state'      => $customer->get_shipping_state(),
-				'postcode'   => $customer->get_shipping_postcode(),
-				'country'    => $customer->get_shipping_country(),
-			]
 		];
 	}
 
