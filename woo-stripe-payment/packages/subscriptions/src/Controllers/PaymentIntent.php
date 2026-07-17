@@ -74,6 +74,8 @@ class PaymentIntent {
 				$bool = true;
 			} elseif ( $this->request->cart_contains_subscription() ) {
 				$bool = true;
+			} elseif ( $this->request->is_product_page_with_subscription() ) {
+				$bool = true;
 			}
 		}
 

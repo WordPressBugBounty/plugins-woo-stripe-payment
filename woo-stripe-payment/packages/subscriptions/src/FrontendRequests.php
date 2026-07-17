@@ -3,6 +3,7 @@
 namespace PaymentPlugins\Stripe\WooCommerceSubscriptions;
 
 use PaymentPlugins\Stripe\ContextHandler;
+use PaymentPlugins\Stripe\Utilities\ProductUtils;
 
 /**
  * @package PaymentPlugins\WooCommerceSubscriptions\Stripe
@@ -58,6 +59,24 @@ class FrontendRequests {
 	 */
 	public function cart_contains_subscription() {
 		return WC()->cart && ( \WC_Subscriptions_Cart::cart_contains_subscription() || \wcs_cart_contains_renewal() );
+	}
+
+	/**
+	 * True when viewing a single product page for a subscription product. Needed because
+	 * cart_contains_subscription() alone misses the case where the cart is empty (or contains
+	 * unrelated items) and the product about to be purchased - e.g. via the product page's own
+	 * Buy Now / express checkout buttons - is itself a subscription.
+	 *
+	 * @return bool
+	 * @since 4.0.8
+	 */
+	public function is_product_page_with_subscription() {
+		if ( ! $this->context_handler->is_product() ) {
+			return false;
+		}
+		$product = ProductUtils::get_queried_product();
+
+		return $product instanceof \WC_Product && \WC_Subscriptions_Product::is_subscription( $product );
 	}
 
 	public function is_order_pay_with_subscription() {
