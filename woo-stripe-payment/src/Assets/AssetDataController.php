@@ -255,11 +255,11 @@ class AssetDataController {
 		// have a gateway present; product/cart only if a gateway is actually rendering a button
 		// there; mini-cart gateways can render (and trigger a payment attempt) from any page.
 		$has_payment_gateway_context = $this->context->is_checkout()
-		                                || $this->context->is_order_pay()
-		                                || $this->context->is_add_payment_method()
-		                                || ( $this->context->is_product() && $this->payment_registry->get_product_payment_gateways() )
-		                                || ( $this->context->is_cart() && $this->payment_registry->get_cart_payment_gateways() )
-		                                || $this->has_minicart_gateways_enabled();
+		                               || $this->context->is_order_pay()
+		                               || $this->context->is_add_payment_method()
+		                               || ( $this->context->is_product() && $this->payment_registry->get_product_payment_gateways() )
+		                               || ( $this->context->is_cart() && $this->payment_registry->get_cart_payment_gateways() )
+		                               || $this->has_minicart_gateways_enabled();
 
 		if ( $has_payment_gateway_context ) {
 			$this->asset_data->add( 'errorMessages', wc_stripe_get_error_messages() );
