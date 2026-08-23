@@ -109,9 +109,9 @@ function wc_stripe_process_charge_failed( $charge, $request ) {
 			 */
 			$payment_method = $payment_methods[ $order->get_payment_method() ];
 			// only update order status if this is an asynchronous payment method,
-			// and there is no completed date on the order. If there is a complete date it
+			// and there is no paid date on the order. If there is a paid date it
 			// means payment_complete was called on the order at some point
-			if ( $payment_method instanceof WC_Payment_Gateway_Stripe && ! $payment_method->synchronous && ! $order->get_date_completed() ) {
+			if ( $payment_method instanceof WC_Payment_Gateway_Stripe && ! $payment_method->synchronous && ! $order->get_date_paid() ) {
 				$order->update_status( apply_filters( 'wc_stripe_charge_failed_status', 'failed' ), $charge->failure_message );
 			}
 		}

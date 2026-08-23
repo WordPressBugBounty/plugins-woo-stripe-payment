@@ -241,14 +241,6 @@ class AssetDataController {
 				]
 			]
 		] );
-		// addressLocales is only consumed by CheckoutFields::isValidAddress(), which only runs in
-		// checkout/express-checkout contexts - product/cart/mini-cart pages get billing/shipping
-		// directly from the wallet (Apple Pay/Google Pay/Link), so no locale validation is needed there.
-		if ( $this->context->is_checkout() ) {
-			$this->asset_data->add( 'addressLocales', wp_json_encode( WC()->countries->get_country_locale() ) );
-		} else {
-			$this->asset_data->add( 'addressLocales', wp_json_encode( new \stdClass() ) );
-		}
 		// errorMessages and requiredFields are only consumed by gateway instance code
 		// (BaseGateway.js / AbstractExpressGateway.js), so both are dead weight on any page
 		// where no gateway is actually rendering. Checkout/order-pay/add-payment-method always

@@ -86,6 +86,10 @@ class WC_Stripe_Redirect_Handler {
 			 */
 			$payment_method = WC()->payment_gateways()->payment_gateways()[ $order->get_payment_method() ];
 
+			if ( ! $payment_method instanceof WC_Payment_Gateway_Stripe ) {
+				return;
+			}
+
 			if ( $result instanceof \PaymentPlugins\Vendor\Stripe\SetupIntent ) {
 				$payment_method->set_setup_intent( $result );
 			}
