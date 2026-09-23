@@ -155,6 +155,10 @@ class WC_Payment_Gateway_Stripe_Link extends \WC_Payment_Gateway_Stripe {
 		);
 	}
 
+	protected function get_element_selector() {
+		return "#wc-{$this->id}-checkout-button";
+	}
+
 	public function get_checkout_script_handles() {
 		$this->assets->register_script( 'wc-stripe-link-checkout', 'build/link-checkout.js' );
 

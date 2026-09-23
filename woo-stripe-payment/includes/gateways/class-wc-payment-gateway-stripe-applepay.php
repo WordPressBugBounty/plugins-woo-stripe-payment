@@ -35,6 +35,10 @@ class WC_Payment_Gateway_Stripe_ApplePay extends WC_Payment_Gateway_Stripe {
 		$this->icon = $this->assets->assets_url( 'img/applepay.svg' );
 	}
 
+	protected function get_element_selector() {
+		return "#wc-{$this->id}-checkout-button";
+	}
+
 	public function get_checkout_script_handles() {
 		$this->assets->register_script( 'wc-stripe-applepay-checkout', 'build/applepay-checkout.js' );
 

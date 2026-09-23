@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Payment Plugins for Stripe WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.14\n"
+"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.15\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-stripe-payment\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-10T20:02:54+00:00\n"
+"POT-Creation-Date: 2026-09-23T15:34:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-stripe-payment\n"
@@ -35,6 +35,7 @@ msgid "Payment Plugins, support@paymentplugins.com"
 msgstr ""
 
 #: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:106
+#: includes/admin/class-wc-stripe-admin-assets.php:151
 #: includes/admin/meta-boxes/views/html-product-data.php:17
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:38
 #: includes/gateways/settings/ach-settings.php:10
@@ -117,23 +118,23 @@ msgstr ""
 msgid "When the billing country matches one of these values, the payment method will be shown on the checkout page."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:292
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:296
 #, php-format
 msgid "Gateway will appear when store currency is <strong>%s</strong>"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:295
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:299
 #, php-format
 msgid " & billing country is not <strong>%s</strong>"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:297
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:300
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:301
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:304
 #, php-format
 msgid " & billing country is <strong>%s</strong>"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:324
+#: includes/abstract/abstract-wc-payment-gateway-stripe-local-payment.php:328
 #, php-format
 msgid "Pay with %s"
 msgstr ""
@@ -273,14 +274,39 @@ msgstr ""
 msgid "Please select or create a payment method configuration"
 msgstr ""
 
-#: includes/admin/class-wc-stripe-admin-menus.php:19
-msgid "Stripe Gateway"
+#: includes/admin/class-wc-stripe-admin-assets.php:147
+#: includes/admin/meta-boxes/views/html-product-data.php:104
+msgid "Save"
 msgstr ""
 
-#: includes/admin/class-wc-stripe-admin-menus.php:23
-#: src/Admin/DashboardPage.php:25
-#: src/Admin/DashboardPage.php:26
-msgid "Stripe by Payment Plugins"
+#: includes/admin/class-wc-stripe-admin-assets.php:148
+msgid "Cancel"
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-assets.php:149
+msgid "Reset"
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-assets.php:150
+#: includes/gateways/settings/upm-settings.php:124
+#: includes/gateways/settings/upm-settings.php:129
+msgid "Adaptive Pricing"
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-assets.php:152
+msgid "Convert prices to the customer's local currency at checkout using Stripe-provided exchange rates."
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-assets.php:153
+msgid "Currency Selector Position"
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-assets.php:154
+msgid "Above Payment Methods"
+msgstr ""
+
+#: includes/admin/class-wc-stripe-admin-assets.php:155
+msgid "Below Payment Methods"
 msgstr ""
 
 #: includes/admin/class-wc-stripe-admin-notices.php:53
@@ -349,6 +375,7 @@ msgstr ""
 #: includes/admin/meta-boxes/views/html-product-data.php:49
 #: includes/gateways/class-wc-payment-gateway-stripe-affirm.php:79
 #: includes/gateways/class-wc-payment-gateway-stripe-afterpay.php:47
+#: includes/gateways/class-wc-payment-gateway-stripe-billie.php:41
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:261
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:79
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:41
@@ -462,6 +489,7 @@ msgstr ""
 #: includes/admin/meta-boxes/views/html-product-data.php:18
 #: includes/gateways/class-wc-payment-gateway-stripe-affirm.php:75
 #: includes/gateways/class-wc-payment-gateway-stripe-afterpay.php:43
+#: includes/gateways/class-wc-payment-gateway-stripe-billie.php:37
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:257
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:75
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:37
@@ -476,6 +504,7 @@ msgstr ""
 #: includes/admin/meta-boxes/views/html-product-data.php:51
 #: includes/gateways/class-wc-payment-gateway-stripe-affirm.php:80
 #: includes/gateways/class-wc-payment-gateway-stripe-afterpay.php:48
+#: includes/gateways/class-wc-payment-gateway-stripe-billie.php:42
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:262
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:80
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:42
@@ -541,10 +570,6 @@ msgstr ""
 
 #: includes/admin/meta-boxes/views/html-product-data.php:85
 msgid "Show Message"
-msgstr ""
-
-#: includes/admin/meta-boxes/views/html-product-data.php:104
-msgid "Save"
 msgstr ""
 
 #: includes/admin/settings/class-wc-stripe-advanced-settings.php:13
@@ -1197,20 +1222,20 @@ msgstr ""
 msgid "No matches found"
 msgstr ""
 
-#: includes/class-wc-stripe-redirect-handler.php:60
+#: includes/class-wc-stripe-redirect-handler.php:103
 #, php-format
 msgid "Error retrieving payment source. Reason: %s"
 msgstr ""
 
-#: includes/class-wc-stripe-redirect-handler.php:62
+#: includes/class-wc-stripe-redirect-handler.php:105
 msgid "This request is invalid. Please try again."
 msgstr ""
 
-#: includes/class-wc-stripe-redirect-handler.php:117
+#: includes/class-wc-stripe-redirect-handler.php:160
 msgid "Payment authorization failed. Please select another payment method."
 msgstr ""
 
-#: includes/class-wc-stripe-redirect-handler.php:216
+#: includes/class-wc-stripe-redirect-handler.php:259
 msgid "Invalid setup intent secret."
 msgstr ""
 
@@ -1270,6 +1295,7 @@ msgstr ""
 
 #: includes/gateways/class-wc-payment-gateway-stripe-affirm.php:83
 #: includes/gateways/class-wc-payment-gateway-stripe-afterpay.php:51
+#: includes/gateways/class-wc-payment-gateway-stripe-billie.php:45
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:265
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:83
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:45
@@ -1631,11 +1657,11 @@ msgstr ""
 msgid "Credit card gateway that integrates with your Stripe account."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:309
+#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:323
 msgid "Only the Stripe payment form and inline form can be used while Link is enabled."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:320
+#: includes/gateways/class-wc-payment-gateway-stripe-cc.php:334
 #: packages/blocks/src/Payments/Gateways/CreditCardPayment.php:56
 msgid "Save Card"
 msgstr ""
@@ -2118,64 +2144,64 @@ msgstr ""
 msgid "Payment method type is required"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:298
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:315
 msgid "Invalid payment method token. Please try again."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:339
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:356
 msgid ""
 "The following list of payment methods are supported by the UPM integration. Payment methods that are\n"
 "\t\t\t\t\t\t\tdisabled are not supported by your Stripe account. Stripe will dynamically render these enabled payment methods based on inputs like the cart currency, amount, and customer location."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:343
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:360
 msgid "Payment method settings are still maintained on their respective settings page."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:472
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:489
 msgid "New Payment Method"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:476
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:493
 msgid "Saved Payment Methods"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:529
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:546
 msgid "Please connect to Stripe before configuring"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:535
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:552
 msgid "Error fetching payment method configurations."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:594
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:611
 msgid "Add New"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:597
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:614
 msgid "Sync"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:611
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:628
 #, php-format
 msgid "Please %1$sconnect your Stripe account%2$s to %3$s mode before configuring the Universal Payment Method."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:614
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:631
 msgid "test"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:614
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:631
 msgid "live"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:687
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:688
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:704
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:705
 #, php-format
 msgid "Error saving payment method configuration in Stripe. Reason: %s"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:710
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:727
 #: includes/tokens/class-wc-payment-token-stripe-cc.php:167
 #: includes/tokens/class-wc-payment-token-stripe-local-payment.php:57
 msgid "n/a"
@@ -2744,6 +2770,14 @@ msgstr ""
 msgid "When true, the Payment Methods render as standalone buttons with space in between them."
 msgstr ""
 
+#: includes/gateways/settings/upm-settings.php:130
+msgid "Configure Adaptive Pricing"
+msgstr ""
+
+#: includes/gateways/settings/upm-settings.php:144
+msgid "If enabled, prices are converted to the customer's local currency at checkout using Stripe-provided exchange rates."
+msgstr ""
+
 #: includes/tokens/class-wc-payment-token-stripe-ach.php:82
 #: includes/tokens/class-wc-payment-token-stripe-ach.php:87
 #: includes/tokens/class-wc-payment-token-stripe-cc.php:103
@@ -3225,18 +3259,18 @@ msgid "Unsupported custom form. Please choose another custom form option in the 
 msgstr ""
 
 #: packages/blocks/src/Payments/Gateways/CreditCardPayment.php:131
-#: packages/blocks/src/Payments/Gateways/UniversalPayment.php:87
+#: packages/blocks/src/Payments/Gateways/UniversalPayment.php:123
 #: templates/installment-plans.php:14
 msgid "Pay in installments:"
 msgstr ""
 
 #: packages/blocks/src/Payments/Gateways/CreditCardPayment.php:132
-#: packages/blocks/src/Payments/Gateways/UniversalPayment.php:88
+#: packages/blocks/src/Payments/Gateways/UniversalPayment.php:124
 msgid "Loading installments..."
 msgstr ""
 
 #: packages/blocks/src/Payments/Gateways/CreditCardPayment.php:133
-#: packages/blocks/src/Payments/Gateways/UniversalPayment.php:89
+#: packages/blocks/src/Payments/Gateways/UniversalPayment.php:125
 #: templates/installment-plans.php:9
 msgid "Fill out card form for eligibility."
 msgstr ""
@@ -3337,27 +3371,27 @@ msgstr ""
 msgid "The selected payment method is invalid."
 msgstr ""
 
-#: packages/preorders/src/PreOrdersController.php:70
+#: packages/preorders/src/PreOrdersController.php:114
 #, php-format
 msgid "Pre-order payment for order failed. Reason: %s"
 msgstr ""
 
-#: packages/preorders/src/PreOrdersController.php:77
+#: packages/preorders/src/PreOrdersController.php:121
 msgid "Pre-order payment initiated in Stripe. Waiting for the payment to clear."
 msgstr ""
 
-#: packages/preorders/src/PreOrdersController.php:81
+#: packages/preorders/src/PreOrdersController.php:125
 #, php-format
 msgid "Pre-order payment captured in Stripe. Payment method: %s"
 msgstr ""
 
-#: packages/preorders/src/PreOrdersController.php:85
+#: packages/preorders/src/PreOrdersController.php:129
 #, php-format
 msgid "Pre-order payment authorized in Stripe. Payment method: %s"
 msgstr ""
 
-#: packages/preorders/src/PreOrdersController.php:88
-#: packages/subscriptions/src/SubscriptionsController.php:164
+#: packages/preorders/src/PreOrdersController.php:132
+#: packages/subscriptions/src/SubscriptionsController.php:187
 #, php-format
 msgid "Customer must manually complete payment for payment method %s"
 msgstr ""
@@ -3374,36 +3408,54 @@ msgstr ""
 msgid "Invalid order key."
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:133
+#: packages/subscriptions/src/SubscriptionsController.php:156
 #, php-format
 msgid "Recurring payment for order failed. Reason: %s"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:150
+#: packages/subscriptions/src/SubscriptionsController.php:173
 msgid "Renewal payment initiated in Stripe. Waiting for the payment to clear."
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:154
+#: packages/subscriptions/src/SubscriptionsController.php:177
 #, php-format
 msgid "Recurring payment captured in Stripe. Payment method: %s"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:158
+#: packages/subscriptions/src/SubscriptionsController.php:181
 #, php-format
 msgid "Recurring payment authorized in Stripe. Payment method: %s"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:333
+#: packages/subscriptions/src/SubscriptionsController.php:356
 msgid "Payment Method Token"
 msgstr ""
 
-#: packages/subscriptions/src/SubscriptionsController.php:337
+#: packages/subscriptions/src/SubscriptionsController.php:360
 msgid "Stripe Customer ID"
 msgstr ""
 
 #: packages/woofunnels/src/Upsell/PaymentGateways/BasePaymentGateway.php:182
 #, php-format
 msgid "%1$s - Order %2$s - One Time offer"
+msgstr ""
+
+#: src/AdaptivePricing/CheckoutSessionController.php:183
+msgid "This checkout session has already been processed."
+msgstr ""
+
+#: src/AdaptivePricing/CheckoutSessionController.php:575
+msgid "Adaptive Pricing is not enabled."
+msgstr ""
+
+#: src/AdaptivePricing/CheckoutSessionController.php:908
+#: src/AdaptivePricing/CheckoutSessionController.php:969
+msgid "Order total"
+msgstr ""
+
+#: src/Admin/DashboardPage.php:25
+#: src/Admin/DashboardPage.php:26
+msgid "Stripe by Payment Plugins"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:50
@@ -3485,7 +3537,7 @@ msgstr ""
 msgid "The selected payment method is invalid. Please select a different payment method."
 msgstr ""
 
-#: src/Payments/Gateways/AbstractGateway.php:195
+#: src/Payments/Gateways/AbstractGateway.php:222
 msgid "See more"
 msgstr ""
 
@@ -3631,6 +3683,10 @@ msgstr ""
 
 #: src/Rest/Routes/V1/OrderPay.php:49
 msgid "Invalid payment method."
+msgstr ""
+
+#: src/Rest/Routes/V1/OrderPay.php:69
+msgid "Unable to process payment for this order."
 msgstr ""
 
 #: src/Rest/Routes/V1/SetupIntent.php:131

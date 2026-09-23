@@ -118,7 +118,11 @@ class WC_Payment_Gateway_Stripe_UPM extends WC_Payment_Gateway_Stripe {
 		return $this->tokens;
 	}
 
-	public function get_checkout_script_handles() {
+	public function get_checkout_script_handles () {
+		if ( wc_stripe_get_container()->get( \PaymentPlugins\Stripe\AdaptivePricing\UPMCheckoutSessionController::class )->is_available() ) {
+			return [ 'wc-stripe-upm-checkout-session' ];
+		}
+
 		$this->assets->register_script( 'wc-stripe-upm-checkout', 'build/upm-checkout.js' );
 
 		return [ 'wc-stripe-upm-checkout' ];
@@ -146,7 +150,20 @@ class WC_Payment_Gateway_Stripe_UPM extends WC_Payment_Gateway_Stripe {
 			$data['paymentElementOptions']['layout']['spacedAccordionItems'] = wc_string_to_bool( $this->get_option( 'spaced_items', 'no' ) );
 		}
 
+		$ap_config = $this->get_option( 'adaptive_pricing_config', [] );
+		if ( is_array( $ap_config ) && ( $ap_config['enabled'] ?? 'no' ) === 'yes' ) {
+			// The currency selector element is created/positioned client-side
+			// (UPMCheckoutSessionGateway.js), not templated server-side, since it needs to live
+			// outside the .wc-payment-form div WooCommerce core's tokenization-form.js hides/shows
+			// based on the saved-token selection.
+			$data['currencySelectorPosition'] = $ap_config['currency_selector_position'] ?? 'above_payment_methods';
+		}
+
 		return $data;
+	}
+
+	protected function get_element_selector() {
+		return '#wc-stripe-upm-element';
 	}
 
 	public function get_element_options( $options = array() ) {

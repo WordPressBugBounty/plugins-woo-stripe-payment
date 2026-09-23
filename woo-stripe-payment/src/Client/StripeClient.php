@@ -135,7 +135,13 @@ class StripeClient {
 	}
 
 	protected function get_client_config(): array {
-		return \apply_filters( 'wc_stripe_client_config_params', [ 'stripe_version' => wc_stripe_get_container()->get( 'API_VERSION' ) ], $this );
+		$stripe_version = wc_stripe_get_container()->get( 'API_VERSION' );
+
+		foreach ( wc_stripe_get_container()->get( 'REQUEST_HEADERS' ) as $beta => $version ) {
+			$stripe_version .= ";{$beta}={$version}";
+		}
+
+		return \apply_filters( 'wc_stripe_client_config_params', [ 'stripe_version' => $stripe_version ], $this );
 	}
 
 	public function is_connected(): bool {

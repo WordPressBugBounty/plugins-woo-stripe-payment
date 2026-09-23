@@ -50,8 +50,35 @@ abstract class AbstractGateway extends \WC_Payment_Gateway {
 		return [
 			'paymentMethodType'     => $this->get_payment_method_type(),
 			'elementOptions'        => $this->get_element_options(),
-			'paymentElementOptions' => $this->get_payment_element_options()
+			'paymentElementOptions' => $this->get_payment_element_options(),
+			'selector'              => $this->get_element_selector()
 		];
+	}
+
+	/**
+	 * Returns the DOM selector for the container this gateway mounts its payment element into.
+	 * Used by Adaptive Pricing's CheckoutSessionGateway (client-side) to know which container to
+	 * mount the shared payment element into when this gateway is selected. Protected rather than
+	 * private so subclasses (e.g. local payment gateways) can override it.
+	 *
+	 * @return string|null
+	 * @since 4.0.15
+	 */
+	protected function get_element_selector() {
+		return null;
+	}
+
+	/**
+	 * Returns true if this gateway can participate in Adaptive Pricing's shared checkout-session
+	 * element (CheckoutSessionGateway) instead of its own. True for everything by default;
+	 * override where a gateway has a mode that isn't Payment-Element-based (e.g. stripe_cc's
+	 * inline/custom card forms).
+	 *
+	 * @return bool
+	 * @since 4.0.15
+	 */
+	public function is_adaptive_pricing_compatible() {
+		return true;
 	}
 
 	/**
