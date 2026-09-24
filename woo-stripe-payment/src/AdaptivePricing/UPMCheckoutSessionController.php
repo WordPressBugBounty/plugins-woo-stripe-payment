@@ -45,6 +45,7 @@ class UPMCheckoutSessionController extends CheckoutSessionController {
 		// covers these cases too, but this avoids depending on that alone.
 		add_filter( 'wc_stripe_process_payment_result', [ $this, 'process_payment_result' ], 20, 3 );
 		add_action( 'wc_stripe_order_payment_complete', [ $this, 'maybe_clear_completed_session' ], 10, 2 );
+		add_filter( 'wc_stripe_api_request_args', [ $this, 'add_checkout_server_update_beta_header' ], 10, 3 );
 
 		add_filter( 'woocommerce_payment_gateway_get_saved_payment_method_option_html', [
 			$this,

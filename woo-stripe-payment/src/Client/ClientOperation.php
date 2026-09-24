@@ -112,10 +112,11 @@ class ClientOperation {
 			 * @param array  $args The array of arguments that will be passed to the service method.
 			 * @param string $property The name of the service being called.
 			 * @param string $method The method of the service. Ex: create, delete, retrieve
+			 * @param string $mode The client mode, "live" or "test".
 			 *
 			 * @since 4.0.0
 			 */
-			$args = \apply_filters( 'wc_stripe_api_request_args', $args, $this->property, $method );
+			$args = \apply_filters( 'wc_stripe_api_request_args', $args, $this->property, $method, $this->mode );
 
 			return $this->service->{$method}( ...$this->prepare_request_args( $args, $method ) );
 		} catch ( \PaymentPlugins\Vendor\Stripe\Exception\ApiErrorException $e ) {

@@ -100,6 +100,32 @@ class CheckoutSessionController {
 	}
 
 	/**
+	 * @param array  $args
+	 * @param string $property
+	 * @param string $method
+	 * @param string $mode
+	 *
+	 * @return array
+	 * @since 4.0.15
+	 */
+	public function add_checkout_server_update_beta_header( $args, $property, $method ) {
+		if ( $property !== 'sessions' || $method !== 'update' || ! $this->is_enabled() ) {
+			return $args;
+		}
+
+		$idx     = count( $args ) - 1;
+		$version = wc_stripe_get_container()->get( 'API_VERSION' );
+
+		foreach ( wc_stripe_get_container()->get( 'REQUEST_HEADERS' ) as $beta => $beta_version ) {
+			$version .= ";{$beta}={$beta_version}";
+		}
+
+		$args[ $idx ]['stripe_version'] = $version;
+
+		return $args;
+	}
+
+	/**
 	 * Links the CheckoutSession to the WC order and short-circuits the PaymentIntent flow.
 	 * Hooked on wc_stripe_process_payment_result; the client then runs actions.confirm(). Order
 	 * completion is driven by the redirect handler / checkout.session webhook, not here.
