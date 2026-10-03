@@ -21,7 +21,9 @@ if ( ! wp_doing_ajax() ) {
 			?>
             <li class="payment_method_<?php echo esc_attr( $gateway->id ) ?>"<?php echo $slot_style ?>>
                 <div class="payment-box">
-					<?php if ( $show_skeleton ) : ?>
+					<?php // A 3rd-party gateway sharing this container has no way to ever resolve
+					// our skeleton loader - see checkout/checkout-banner.php. ?>
+					<?php if ( $show_skeleton && $gateway instanceof \PaymentPlugins\Stripe\Payments\Gateways\AbstractGateway ) : ?>
                         <div class="wc-stripe-express-skeleton" aria-hidden="true"></div>
 					<?php endif; ?>
 					<?php $gateway->product_fields() ?>

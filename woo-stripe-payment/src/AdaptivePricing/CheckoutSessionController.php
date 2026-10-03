@@ -103,7 +103,6 @@ class CheckoutSessionController {
 	 * @param array  $args
 	 * @param string $property
 	 * @param string $method
-	 * @param string $mode
 	 *
 	 * @return array
 	 * @since 4.0.15

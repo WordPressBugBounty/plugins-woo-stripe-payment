@@ -58,6 +58,42 @@ class WC_Payment_Gateway_Stripe_UPM extends WC_Payment_Gateway_Stripe {
 	 * @throws \Exception
 	 */
 	public function process_payment( $order_id ) {
+		$this->resolve_child_payment_gateway();
+
+		if ( $this->child_payment_gateway ) {
+			$this->prepare_child_payment_gateway();
+
+			return $this->child_payment_gateway->process_payment( $order_id );
+		}
+
+		return parent::process_payment( $order_id );
+	}
+
+	/**
+	 * Mirrors request state onto $this->child_payment_gateway once resolve_child_payment_gateway()
+	 * has set it - needed before the child's own payment_controller can process the payment.
+	 * Normally only reached via process_payment() above, but routes that can't call
+	 * process_payment() wholesale (e.g. OrderPay, which would incorrectly empty the cart) need
+	 * to trigger this independently first.
+	 */
+	public function prepare_child_payment_gateway() {
+		$this->child_payment_gateway->has_parent_gateway = true;
+		$this->child_payment_gateway->set_payment_method_id( $this->get_payment_method_from_request() );
+		$this->child_payment_gateway->set_payment_method_token( $this->get_payment_method_from_request() );
+		$_POST[ $this->child_payment_gateway->payment_intent_key ]         = wc_get_var( $_POST[ $this->payment_intent_key ], '' );
+		$_POST[ $this->child_payment_gateway->payment_type_key ]           = wc_get_var( $_POST[ $this->payment_type_key ], '' );
+		$_POST["wc-{$this->child_payment_gateway->id}-new-payment-method"] = wc_get_var( $_POST["wc-{$this->id}-new-payment-method"], '' );
+	}
+
+	/**
+	 * Resolves $this->payment_method_type / $this->child_payment_gateway from the request.
+	 * Normally only reached via process_payment() above, but routes that can't call
+	 * process_payment() wholesale (e.g. OrderPay, which would incorrectly empty the cart) need
+	 * to trigger this independently first.
+	 *
+	 * @throws \Exception
+	 */
+	public function resolve_child_payment_gateway() {
 		if ( $this->should_use_saved_payment_method() ) {
 			$this->set_child_payment_gateway(
 				$this->get_child_payment_gateway_from_token( $this->get_payment_method_from_request() )
@@ -69,23 +105,10 @@ class WC_Payment_Gateway_Stripe_UPM extends WC_Payment_Gateway_Stripe {
 					throw new \Exception( sprintf( __( '%s is an unsupported payment method. Please remove it from your payment method configuration.', 'woo-stripe-payment' ), ucfirst( $this->payment_method_type ) ) );
 				}
 				$this->set_child_payment_gateway(
-					$this->get_payment_gateway_from_type( $this->get_payment_method_type_from_request() )
+					$this->get_payment_gateway_from_type( $this->payment_method_type )
 				);
 			}
 		}
-
-		if ( $this->child_payment_gateway ) {
-			$this->child_payment_gateway->has_parent_gateway = true;
-			$this->child_payment_gateway->set_payment_method_id( $this->get_payment_method_from_request() );
-			$this->child_payment_gateway->set_payment_method_token( $this->get_payment_method_from_request() );
-			$_POST[ $this->child_payment_gateway->payment_intent_key ]         = wc_get_var( $_POST[ $this->payment_intent_key ], '' );
-			$_POST[ $this->child_payment_gateway->payment_type_key ]           = wc_get_var( $_POST[ $this->payment_type_key ], '' );
-			$_POST["wc-{$this->child_payment_gateway->id}-new-payment-method"] = wc_get_var( $_POST["wc-{$this->id}-new-payment-method"], '' );
-
-			return $this->child_payment_gateway->process_payment( $order_id );
-		}
-
-		return parent::process_payment( $order_id );
 	}
 
 	public function add_payment_method() {
@@ -739,9 +762,13 @@ class WC_Payment_Gateway_Stripe_UPM extends WC_Payment_Gateway_Stripe {
 	public function add_stripe_order_args( &$args, $order, $intent = null ) {
 		if ( ! $this->payment_method_type ) {
 			unset( $args['payment_method_types'], $args['confirmation_method'] );
-			$args['payment_method_configuration'] = $this->get_payment_method_configuration( wc_stripe_order_mode( $order ) );
+			// automatic_payment_methods can't be changed after the intent is created, and Stripe
+			// requires it alongside payment_method_configuration - so both are create-only. On an
+			// update, leave the intent's existing payment_method_configuration as-is rather than
+			// risk a rejection (e.g. if $this->payment_method_type is ever unexpectedly empty here).
 			if ( ! $intent ) {
-				$args['automatic_payment_methods'] = array( 'enabled' => true );
+				$args['payment_method_configuration'] = $this->get_payment_method_configuration( wc_stripe_order_mode( $order ) );
+				$args['automatic_payment_methods']    = array( 'enabled' => true );
 			}
 		} else if ( $this->payment_method_type === 'link' ) {
 			// This resolves https://github.com/paymentplugins/woo-stripe-payment/issues/17

@@ -9,6 +9,7 @@ use PaymentPlugins\Stripe\Admin\DashboardPage;
 use PaymentPlugins\Stripe\Assets\AssetDataApi;
 use PaymentPlugins\Stripe\Assets\AssetDataController;
 use PaymentPlugins\Stripe\Assets\AssetsApi;
+use PaymentPlugins\Stripe\Cart\CartController;
 use PaymentPlugins\Stripe\Checkout\ExpressCheckoutRenderer;
 use PaymentPlugins\Stripe\Client\StripeClient;
 use PaymentPlugins\Stripe\Container\Container;
@@ -70,6 +71,7 @@ class ServiceProvider {
 		$this->container->get( PaymentTokenController::class )->initialize();
 		$this->container->get( OrderAttributionController::class )->initialize();
 		$this->container->get( ExpressCheckoutRenderer::class )->initialize();
+		$this->container->get( CartController::class )->initialize();
 
 		if ( is_admin() ) {
 			$this->container->get( AdminPageController::class )->initialize();
@@ -222,6 +224,9 @@ class ServiceProvider {
 
 		$this->container->register( ExpressCheckoutRenderer::class, function ( $container ) {
 			return new ExpressCheckoutRenderer( $container->get( PaymentGatewayRegistry::class ) );
+		} );
+		$this->container->register( CartController::class, function ( $container ) {
+			return new CartController();
 		} );
 	}
 

@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Payment Plugins for Stripe WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.16\n"
+"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.18\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-stripe-payment\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-24T16:26:50+00:00\n"
+"POT-Creation-Date: 2026-10-03T16:36:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-stripe-payment\n"
@@ -2135,73 +2135,73 @@ msgstr ""
 msgid "Stripe payment method that lets you combine all payment methods into a single integration."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:69
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:105
 #, php-format
 msgid "%s is an unsupported payment method. Please remove it from your payment method configuration."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:94
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:117
 msgid "Payment method type is required"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:315
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:338
 msgid "Invalid payment method token. Please try again."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:356
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:379
 msgid ""
 "The following list of payment methods are supported by the UPM integration. Payment methods that are\n"
 "\t\t\t\t\t\t\tdisabled are not supported by your Stripe account. Stripe will dynamically render these enabled payment methods based on inputs like the cart currency, amount, and customer location."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:360
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:383
 msgid "Payment method settings are still maintained on their respective settings page."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:489
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:512
 msgid "New Payment Method"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:493
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:516
 msgid "Saved Payment Methods"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:546
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:569
 msgid "Please connect to Stripe before configuring"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:552
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:575
 msgid "Error fetching payment method configurations."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:611
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:634
 msgid "Add New"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:614
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:637
 msgid "Sync"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:628
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:651
 #, php-format
 msgid "Please %1$sconnect your Stripe account%2$s to %3$s mode before configuring the Universal Payment Method."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:631
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:654
 msgid "test"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:631
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:654
 msgid "live"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:704
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:705
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:727
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:728
 #, php-format
 msgid "Error saving payment method configuration in Stripe. Reason: %s"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:727
+#: includes/gateways/class-wc-payment-gateway-stripe-upm.php:750
 #: includes/tokens/class-wc-payment-token-stripe-cc.php:167
 #: includes/tokens/class-wc-payment-token-stripe-local-payment.php:57
 msgid "n/a"
@@ -3440,16 +3440,16 @@ msgstr ""
 msgid "%1$s - Order %2$s - One Time offer"
 msgstr ""
 
-#: src/AdaptivePricing/CheckoutSessionController.php:209
+#: src/AdaptivePricing/CheckoutSessionController.php:208
 msgid "This checkout session has already been processed."
 msgstr ""
 
-#: src/AdaptivePricing/CheckoutSessionController.php:601
+#: src/AdaptivePricing/CheckoutSessionController.php:600
 msgid "Adaptive Pricing is not enabled."
 msgstr ""
 
-#: src/AdaptivePricing/CheckoutSessionController.php:934
-#: src/AdaptivePricing/CheckoutSessionController.php:995
+#: src/AdaptivePricing/CheckoutSessionController.php:933
+#: src/AdaptivePricing/CheckoutSessionController.php:994
 msgid "Order total"
 msgstr ""
 
@@ -3717,7 +3717,7 @@ msgid "Error processing webhook. Message: %s Exception: %s"
 msgstr ""
 
 #: templates/cart/payment-methods.php:17
-#: templates/cart/payment-methods.php:39
+#: templates/cart/payment-methods.php:41
 msgid "or"
 msgstr ""
 
@@ -3779,7 +3779,7 @@ msgstr ""
 msgid "XX.XXX.XXX/XXXX-XX or XXXXXXXXXXXXXX"
 msgstr ""
 
-#: templates/checkout/checkout-banner.php:28
+#: templates/checkout/checkout-banner.php:31
 msgid "OR"
 msgstr ""
 

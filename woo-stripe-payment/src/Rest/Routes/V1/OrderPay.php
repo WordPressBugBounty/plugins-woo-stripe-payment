@@ -77,6 +77,17 @@ class OrderPay extends AbstractRoute {
 			];
 		}
 
+		if ( $payment_method->id === 'stripe_upm' ) {
+			/**
+			 * @var \WC_Payment_Gateway_Stripe_UPM $payment_method
+			 */
+			$payment_method->resolve_child_payment_gateway();
+			if ( $payment_method->get_child_payment_gateway() ) {
+				$payment_method->prepare_child_payment_gateway();
+				$payment_method = $payment_method->get_child_payment_gateway();
+			}
+		}
+
 		$result = $payment_method->payment_controller->process_payment( $order );
 
 		if ( is_wp_error( $result ) ) {

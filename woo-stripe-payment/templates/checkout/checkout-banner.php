@@ -18,7 +18,10 @@ defined( 'ABSPATH' ) || exit;
 					: '';
 				?>
                 <li class="wc-stripe-checkout-banner-gateway banner_payment_method_<?php echo esc_attr( $gateway->id ) ?>"<?php echo $slot_style ?>>
-					<?php if ( $show_skeleton ) : ?>
+					<?php // A 3rd-party gateway sharing this banner (e.g. PayPal) has no way to ever
+					// resolve our skeleton loader - it never fires express_element_ready/
+					// payment_unavailable, so a placeholder rendered for it is never removed. ?>
+					<?php if ( $show_skeleton && $gateway instanceof \PaymentPlugins\Stripe\Payments\Gateways\AbstractGateway ) : ?>
                         <div class="wc-stripe-express-skeleton" aria-hidden="true"></div>
 					<?php endif; ?>
                 </li>

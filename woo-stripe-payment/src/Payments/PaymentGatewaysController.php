@@ -382,17 +382,22 @@ class PaymentGatewaysController {
 				// fetch the payment method configurations
 				$result = $client->paymentMethodConfigurations->all( [ 'limit' => 50 ] );
 				if ( ! is_wp_error( $result ) && ! empty( $result->data ) ) {
-					// find the default configuration or the config associated with the application
-					$pmc = null;
+					// Find the config associated with the application - always takes priority,
+					// regardless of result order, since Stripe rejects updates to a configuration
+					// we don't own. Test mode allows manually-entered API keys (no OAuth
+					// application context), so fall back to an unowned default configuration
+					// there - but never one owned by a different application.
+					$pmc         = null;
+					$default_pmc = null;
 					foreach ( $result->data as $item ) {
 						if ( $item->application == $application ) {
 							$pmc = $item;
 							break;
-						} elseif ( $mode === 'test' && $item->is_default ) {
-							$pmc = $item;
-							break;
+						} elseif ( $mode === 'test' && empty( $item->application ) && $item->is_default ) {
+							$default_pmc = $default_pmc ?: $item;
 						}
 					}
+					$pmc = $pmc ?: $default_pmc;
 					if ( $pmc ) {
 						switch ( $gateway->id ) {
 							case 'stripe_applepay':
