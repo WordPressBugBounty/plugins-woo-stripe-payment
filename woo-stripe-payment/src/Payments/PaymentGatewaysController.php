@@ -21,6 +21,20 @@ class PaymentGatewaysController {
 	 */
 	private $enqueued_script_handles = [];
 
+	/**
+	 * Contexts whose classic (shortcode) template has rendered on this request.
+	 *
+	 * @var array
+	 */
+	private $rendered_shortcode_contexts = [];
+
+	/**
+	 * Contexts whose scripts were dequeued by dequeue_scripts().
+	 *
+	 * @var array
+	 */
+	private $dequeued_contexts = [];
+
 	public function __construct( PaymentGatewayRegistry $registry, ContextHandler $context_handler ) {
 		$this->registry        = $registry;
 		$this->context_handler = $context_handler;
@@ -86,7 +100,8 @@ class PaymentGatewaysController {
 			'WC_Payment_Gateway_Stripe_Billie',
 			'WC_Payment_Gateway_Stripe_Satispay',
 			'WC_Payment_Gateway_Stripe_Scalapay',
-			'WC_Payment_Gateway_Stripe_MBWay'
+			'WC_Payment_Gateway_Stripe_MBWay',
+			'WC_Payment_Gateway_Stripe_Wero'
 		) );
 	}
 
@@ -165,9 +180,9 @@ class PaymentGatewaysController {
 	 * Appends the express button skeleton loader handle when the context has express
 	 * buttons and the skeleton hasn't been filtered off for that context.
 	 *
-	 * @param array  $handles     Script handles being enqueued for the context.
+	 * @param array  $handles Script handles being enqueued for the context.
 	 * @param bool   $has_express Whether the context actually renders express buttons.
-	 * @param string $context     One of: express_checkout, product, cart.
+	 * @param string $context One of: express_checkout, product, cart.
 	 *
 	 * @return array
 	 */
@@ -236,11 +251,41 @@ class PaymentGatewaysController {
 	 * @return void
 	 */
 	public function dequeue_scripts( $context ) {
+		// The classic template needs its scripts even when the block is on the same page.
+		if ( in_array( $context, $this->rendered_shortcode_contexts, true ) ) {
+			return;
+		}
 		if ( ! empty( $this->enqueued_script_handles[ $context ] ) ) {
 			foreach ( $this->enqueued_script_handles[ $context ] as $handle ) {
 				wp_dequeue_script( $handle );
 			}
 			wp_dequeue_style( 'wc-stripe-styles' );
+			$this->dequeued_contexts[] = $context;
+		}
+	}
+
+	/**
+	 * Called when a classic (shortcode) template renders, e.g. the checkout payment fields or the
+	 * cart buttons. Re-enqueues the context's scripts if a block on the same page already dequeued
+	 * them, and prevents a later dequeue.
+	 *
+	 * @param string $context One of: checkout, cart.
+	 *
+	 * @return void
+	 * @since 4.0.19
+	 */
+	public function on_classic_render( $context ) {
+		if ( in_array( $context, $this->rendered_shortcode_contexts, true ) || wp_doing_ajax() ) {
+			return;
+		}
+		$this->rendered_shortcode_contexts[] = $context;
+		$index                               = array_search( $context, $this->dequeued_contexts, true );
+		if ( false !== $index ) {
+			foreach ( $this->enqueued_script_handles[ $context ] as $handle ) {
+				wp_enqueue_script( $handle );
+			}
+			wp_enqueue_style( 'wc-stripe-styles' );
+			unset( $this->dequeued_contexts[ $index ] );
 		}
 	}
 
@@ -369,8 +414,9 @@ class PaymentGatewaysController {
 		/**
 		 * @var \StripeClient $client
 		 */
-		$client      = wc_stripe_get_container()->get( StripeClient::class );
-		$application = wc_stripe_get_container()->get( 'CLIENT_ID' );
+		$client           = wc_stripe_get_container()->get( StripeClient::class );
+		$application      = wc_stripe_get_container()->get( 'CLIENT_ID' );
+		$test_application = wc_stripe_get_container()->get( 'TEST_CLIENT_ID' );
 		// Guard against other plugins that use outdated Stripe PHP SDK
 		if ( isset( $client->paymentMethodConfigurations ) ) {
 			$modes = [ 'live', 'test' ];
@@ -384,13 +430,16 @@ class PaymentGatewaysController {
 				if ( ! is_wp_error( $result ) && ! empty( $result->data ) ) {
 					// Find the config associated with the application - always takes priority,
 					// regardless of result order, since Stripe rejects updates to a configuration
-					// we don't own. Test mode allows manually-entered API keys (no OAuth
-					// application context), so fall back to an unowned default configuration
-					// there - but never one owned by a different application.
-					$pmc         = null;
-					$default_pmc = null;
+					// we don't own. Test mode also recognizes TEST_CLIENT_ID (a separate
+					// application historically used only for test-mode OAuth connections - see
+					// its registration in Plugin.php), and falls back to an unowned default
+					// configuration if neither matches - but never one owned by a different
+					// application.
+					$owned_applications = $mode === 'test' ? [ $application, $test_application ] : [ $application ];
+					$pmc                = null;
+					$default_pmc        = null;
 					foreach ( $result->data as $item ) {
-						if ( $item->application == $application ) {
+						if ( in_array( $item->application, $owned_applications ) ) {
 							$pmc = $item;
 							break;
 						} elseif ( $mode === 'test' && empty( $item->application ) && $item->is_default ) {

@@ -170,6 +170,9 @@ abstract class WC_Payment_Gateway_Stripe extends AbstractLegacyGateway {
 	}
 
 	public function payment_fields() {
+		wc_stripe_get_container()
+			->get( \PaymentPlugins\Stripe\Payments\PaymentGatewaysController::class )
+			->on_classic_render( 'checkout' );
 		// @ todo - remove wc_stripe_token_field eventually as this is used to store the payment method Id.
 		// It's replaced by "_payment_method_id"
 		wc_stripe_token_field( $this );

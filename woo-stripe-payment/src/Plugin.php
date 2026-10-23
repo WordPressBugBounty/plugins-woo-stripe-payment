@@ -121,6 +121,12 @@ class Plugin {
 		// the version header can be rejected on unrelated requests.
 		$this->container->register( 'REQUEST_HEADERS', [ 'checkout_server_update_beta' => 'v1' ] );
 		$this->container->register( 'CLIENT_ID', 'ca_Gp4vLOJiqHJLZGxakHW7JdbBlcgWK8Up' );
+		// A separate application ID, historically used only for test-mode OAuth connections
+		// before the plugin consolidated to a single client ID for both modes (see
+		// includes/class-stripe.php's commented-out "Test client id"). Merchants who connected
+		// test mode under it still have payment method configurations owned by it, so it needs
+		// to still be recognized in PaymentGatewaysController::process_payment_gateway_options().
+		$this->container->register( 'TEST_CLIENT_ID', 'ca_Gp4vL3V6FpTguYoZIehD5COPeI80rLpV' );
 
 		// Register plugin paths
 		$this->container->register( 'PLUGIN_FILE', $this->plugin_file );

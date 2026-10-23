@@ -10,6 +10,7 @@ if ( ! class_exists( 'WC_Payment_Gateway_Stripe_Local_Payment' ) ) {
  *
  * @package PaymentPlugins\Gateways
  * @author  PaymentPlugins
+ * @deprecated
  *
  */
 class WC_Payment_Gateway_Stripe_Giropay extends WC_Payment_Gateway_Stripe_Local_Payment {

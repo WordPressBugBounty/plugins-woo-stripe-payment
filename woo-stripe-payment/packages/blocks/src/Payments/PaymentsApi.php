@@ -175,6 +175,9 @@ class PaymentsApi {
 		$this->container->register( Gateways\MBWayPayment::class, function ( Container $container ) {
 			return new Gateways\MBWayPayment( $container->get( 'BLOCK_ASSETS' ) );
 		} );
+		$this->container->register( Gateways\WeroPayment::class, function ( Container $container ) {
+			return new Gateways\WeroPayment( $container->get( 'BLOCK_ASSETS' ) );
+		} );
 		$this->container->register( Gateways\UniversalPayment::class, function ( Container $container ) {
 			return new Gateways\UniversalPayment(
 				$container->get( 'BLOCK_ASSETS' ),
@@ -232,6 +235,7 @@ class PaymentsApi {
 			Gateways\SatispayPayment::class,
 			Gateways\ScalapayPayment::class,
 			Gateways\MBWayPayment::class,
+			Gateways\WeroPayment::class,
 		);
 
 		foreach ( $payment_methods as $clazz ) {

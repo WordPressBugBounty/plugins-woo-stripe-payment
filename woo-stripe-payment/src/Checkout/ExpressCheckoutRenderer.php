@@ -141,6 +141,7 @@ class ExpressCheckoutRenderer {
 	 * Renders express payment buttons on the cart page.
 	 */
 	public function render_cart_buttons() {
+		\wc_stripe_get_container()->get( \PaymentPlugins\Stripe\Payments\PaymentGatewaysController::class )->on_classic_render( 'cart' );
 		$gateways = $this->registry->get_cart_payment_gateways();
 		if ( $gateways ) {
 			\wc_stripe_get_template( 'cart/payment-methods.php', [

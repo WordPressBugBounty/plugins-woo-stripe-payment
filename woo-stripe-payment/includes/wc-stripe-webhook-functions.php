@@ -254,7 +254,8 @@ function wc_stripe_charge_dispute_closed( $dispute ) {
 		} else {
 			$order = wc_stripe_get_order_from_transaction( $dispute->charge );
 		}
-		if ( ! $order ) {
+		// The metadata order ID may belong to another site sharing the same Stripe account.
+		if ( ! $order instanceof \WC_Order || $order->get_transaction_id() !== $dispute->charge ) {
 			wc_stripe_log_info( sprintf( 'No order found for charge %s. Dispute %s', $dispute->charge, $dispute->id ) );
 
 			return;

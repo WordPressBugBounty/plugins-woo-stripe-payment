@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Payment Plugins for Stripe WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.18\n"
+"Project-Id-Version: Payment Plugins for Stripe WooCommerce 4.0.19\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-stripe-payment\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-03T16:36:42+00:00\n"
+"POT-Creation-Date: 2026-10-22T22:35:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-stripe-payment\n"
@@ -139,93 +139,93 @@ msgstr ""
 msgid "Pay with %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:362
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:365
 msgid "User must be logged in."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:400
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:403
 #, php-format
 msgid "Error saving payment method. Reason: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:419
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:422
 #, php-format
 msgid "Order refunded in Stripe. Refund ID: %s. Amount: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:462
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:465
 #, php-format
 msgid "Order amount captured in Stripe. Amount: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:469
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:472
 #, php-format
 msgid "Error capturing charge in Stripe. Reason: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:501
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:504
 #, php-format
 msgid "Error voiding charge. Reason: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:503
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:506
 msgid "Charge voided in Stripe."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:665
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:668
 msgid "Save payment method"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:831
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:834
 #, php-format
 msgid "Attempt to save payment method failed. Reason: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:859
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:862
 msgid "We were not able to save your payment method. To prevent billing issues with your subscription, please add a payment method to the subscription."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:861
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:864
 #, php-format
 msgid "We were not able to save your payment method. Reason: %s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:907
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:910
 #: includes/abstract/abstract-wc-stripe-payment.php:261
 #, php-format
 msgid "Order %1$s from %2$s"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1062
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1065
 msgid "Cannot process payment"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1070
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1073
 #, php-format
 msgid "Increase your conversion rate by offering %1$s on your Product and Cart pages, or at the top of the checkout page. <br/><strong>Note:</strong> you can control which products display %s by going to the product edit page."
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1147
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1178
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1150
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1181
 #: src/Transformers/DataTransformer.php:217
 #: src/Transformers/DataTransformer.php:287
 msgid "Shipping"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1155
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1181
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1158
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1184
 #: src/Transformers/DataTransformer.php:241
 #: src/Transformers/DataTransformer.php:298
 msgid "Discount"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1158
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1161
 #: src/Transformers/DataTransformer.php:251
 #: src/Transformers/DataTransformer.php:322
 msgid "Tax"
 msgstr ""
 
-#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1188
+#: includes/abstract/abstract-wc-payment-gateway-stripe.php:1191
 #: src/Transformers/DataTransformer.php:312
 msgid "Fees"
 msgstr ""
@@ -379,6 +379,7 @@ msgstr ""
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:261
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:79
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:41
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:87
 #: includes/gateways/settings/applepay-settings.php:54
 #: includes/gateways/settings/cc-settings.php:51
 #: includes/gateways/settings/googlepay-settings.php:61
@@ -493,6 +494,7 @@ msgstr ""
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:257
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:75
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:37
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:83
 #: includes/gateways/settings/applepay-settings.php:50
 #: includes/gateways/settings/cc-settings.php:47
 #: includes/gateways/settings/googlepay-settings.php:57
@@ -508,6 +510,7 @@ msgstr ""
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:262
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:80
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:42
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:88
 #: includes/gateways/settings/applepay-settings.php:55
 #: includes/gateways/settings/cc-settings.php:52
 #: includes/gateways/settings/googlepay-settings.php:62
@@ -1299,6 +1302,7 @@ msgstr ""
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:265
 #: includes/gateways/class-wc-payment-gateway-stripe-link.php:83
 #: includes/gateways/class-wc-payment-gateway-stripe-mobilepay.php:45
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:91
 #: includes/gateways/settings/applepay-settings.php:58
 #: includes/gateways/settings/cc-settings.php:55
 #: includes/gateways/settings/payment-request-settings.php:66
@@ -1405,6 +1409,7 @@ msgstr ""
 #: includes/gateways/class-wc-payment-gateway-stripe-ideal.php:42
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:279
 #: includes/gateways/class-wc-payment-gateway-stripe-mbway.php:88
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:95
 #: includes/gateways/settings/googlepay-settings.php:99
 msgid "Icon"
 msgstr ""
@@ -1690,15 +1695,15 @@ msgstr ""
 msgid "FPX gateway that integrates with your Stripe account."
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-giropay.php:26
+#: includes/gateways/class-wc-payment-gateway-stripe-giropay.php:27
 msgid "Giropay"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-giropay.php:27
+#: includes/gateways/class-wc-payment-gateway-stripe-giropay.php:28
 msgid "Giropay (Stripe) by Payment Plugins"
 msgstr ""
 
-#: includes/gateways/class-wc-payment-gateway-stripe-giropay.php:28
+#: includes/gateways/class-wc-payment-gateway-stripe-giropay.php:29
 msgid "Giropay gateway that integrates with your Stripe account."
 msgstr ""
 
@@ -1769,6 +1774,7 @@ msgid "Pink background black text"
 msgstr ""
 
 #: includes/gateways/class-wc-payment-gateway-stripe-klarna.php:287
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:104
 msgid "This is the icon style that appears next to the gateway on the checkout page."
 msgstr ""
 
@@ -2217,6 +2223,23 @@ msgstr ""
 
 #: includes/gateways/class-wc-payment-gateway-stripe-wechat.php:41
 msgid "WeChat gateway that integrates with your Stripe account."
+msgstr ""
+
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:59
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:99
+msgid "Wero"
+msgstr ""
+
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:60
+msgid "Wero (Stripe) by Payment Plugins"
+msgstr ""
+
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:61
+msgid "Wero gateway that integrates with your Stripe account."
+msgstr ""
+
+#: includes/gateways/class-wc-payment-gateway-stripe-wero.php:100
+msgid "Wero black"
 msgstr ""
 
 #: includes/gateways/class-wc-payment-gateway-stripe-zip.php:25
@@ -3175,17 +3198,17 @@ msgstr ""
 msgid "A dispute has been created for charge %1$s. Dispute status: %2$s."
 msgstr ""
 
-#: includes/wc-stripe-webhook-functions.php:262
+#: includes/wc-stripe-webhook-functions.php:263
 #, php-format
 msgid "Dispute %1$s has been closed. Result: %2$s."
 msgstr ""
 
-#: includes/wc-stripe-webhook-functions.php:299
+#: includes/wc-stripe-webhook-functions.php:300
 #, php-format
 msgid "A review has been opened for charge %1$s. Reason: %2$s."
 msgstr ""
 
-#: includes/wc-stripe-webhook-functions.php:333
+#: includes/wc-stripe-webhook-functions.php:334
 #, php-format
 msgid "A review has been closed for charge %1$s. Reason: %2$s."
 msgstr ""
