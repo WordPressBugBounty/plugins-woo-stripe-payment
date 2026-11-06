@@ -26,8 +26,11 @@ class Package extends AbstractPackage {
 				$container->get( PaymentGatewayRegistry::class )
 			);
 		} );
+		$this->container->register( FrontendRequests::class, function ( $container ) {
+			return new FrontendRequests( $container->get( ContextHandler::class ) );
+		} );
 		$this->container->register( PaymentIntent::class, function ( $container ) {
-			new PaymentIntent( new FrontendRequests() );
+			return new PaymentIntent( $container->get( FrontendRequests::class ) );
 		} );
 	}
 

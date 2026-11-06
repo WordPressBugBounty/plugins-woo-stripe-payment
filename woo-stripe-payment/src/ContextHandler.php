@@ -5,9 +5,10 @@ namespace PaymentPlugins\Stripe;
 use PaymentPlugins\Stripe\Utilities\ProductUtils;
 
 /**
- * Keeps track of the page "context"
+ * Keeps track of the page "context". Extends RequestContext so filter callbacks
+ * type-hinted against it keep working.
  */
-class ContextHandler {
+class ContextHandler extends RequestContext {
 
 	const CHECKOUT = 'checkout';
 
@@ -116,6 +117,9 @@ class ContextHandler {
 				$this->context = self::CART;
 			} elseif ( $this->is_product_block() ) {
 				$this->context = self::PRODUCT;
+			} elseif ( $this->is_store_api_request() ) {
+				// Store API requests are made by the Cart and Checkout blocks.
+				$this->context = self::CHECKOUT;
 			}
 			do_action( 'wc_stripe_initialize_page_context', $this );
 		}
@@ -223,6 +227,22 @@ class ContextHandler {
 		return is_singular() && $id > 0
 		       && class_exists( '\WC_Blocks_Utils' )
 		       && \WC_Blocks_Utils::has_block_in_page( $id, 'woocommerce/single-product' );
+	}
+
+	/**
+	 * @return bool
+	 * @since 4.0.20
+	 */
+	private function is_store_api_request() {
+		if ( method_exists( WC(), 'is_store_api_request' ) ) {
+			return WC()->is_store_api_request();
+		}
+		if ( empty( $_SERVER['REQUEST_URI'] ) || ! function_exists( 'rest_get_url_prefix' ) ) {
+			return false;
+		}
+		$request_uri = \wc_clean( \wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
+		return false !== strpos( $request_uri, '/' . trailingslashit( rest_get_url_prefix() ) . 'wc/store/' );
 	}
 
 }

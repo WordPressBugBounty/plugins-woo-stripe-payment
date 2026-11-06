@@ -28,6 +28,12 @@ class WC_Stripe_Payment_Intent extends WC_Stripe_Payment {
 				$intent = $this->client->paymentIntents->update( $intent['id'], $this->get_payment_intent_args( $order, false, $intent ) );
 			}
 		} else {
+			// A webhook completes the order's existing PaymentIntent. Creating one would replace the paid intent.
+			if ( wc_stripe_is_processing_webhook() ) {
+				wc_stripe_log_error( sprintf( 'The PaymentIntent for order %s could not be used while processing a webhook. A new PaymentIntent was not created.', $order->get_id() ) );
+
+				return new WP_Error( 'payment-intent-error', sprintf( __( 'The PaymentIntent for order %s could not be used.', 'woo-stripe-payment' ), $order->get_id() ) );
+			}
 			$intent = $this->client->paymentIntents->create( $this->get_payment_intent_args( $order ) );
 		}
 		if ( is_wp_error( $intent ) ) {
@@ -45,12 +51,21 @@ class WC_Stripe_Payment_Intent extends WC_Stripe_Payment {
 		// always update the order with the payment intent.
 		$order->update_meta_data( WC_Stripe_Constants::PAYMENT_INTENT_ID, $intent->id );
 		$order->update_meta_data( WC_Stripe_Constants::PAYMENT_METHOD_TOKEN, is_object( $intent->payment_method ) ? $intent->payment_method->id : $intent->payment_method );
-		$order->update_meta_data( WC_Stripe_Constants::MODE, wc_stripe_mode() );
+		$order->update_meta_data( WC_Stripe_Constants::MODE, $intent->livemode ? 'live' : 'test' );
 		$order->update_meta_data( WC_Stripe_Constants::PAYMENT_INTENT, WC_Stripe_Utils::sanitize_intent( $intent->toArray() ) );
 		$order->set_payment_method( $this->payment_method->id );
 		$order->save();
-		if ( $intent->status === 'requires_confirmation' ) {
-			$intent = $this->client->paymentIntents->confirm( $intent->id, apply_filters( 'wc_stripe_payment_intent_confirmation_args', $this->payment_method->get_payment_intent_confirmation_args( $intent, $order ), $intent, $order, $this->payment_method ) );
+		// An intent created without a payment method is confirmed using the confirmation token.
+		if ( $intent->status === 'requires_confirmation'
+		     || ( $intent->status === 'requires_payment_method' && $this->payment_method->get_confirmation_token_from_request() ) ) {
+			$confirmation_args = $this->payment_method->get_payment_intent_confirmation_args( $intent, $order );
+			$this->add_confirmation_token( $confirmation_args, $order );
+			$confirmation_args = apply_filters( 'wc_stripe_payment_intent_confirmation_args', $confirmation_args, $intent, $order, $this->payment_method );
+			// A confirmation token already contains the mandate data.
+			if ( ! empty( $confirmation_args['confirmation_token'] ) ) {
+				unset( $confirmation_args['mandate_data'] );
+			}
+			$intent = $this->client->paymentIntents->confirm( $intent->id, $confirmation_args );
 			if ( is_wp_error( $intent ) ) {
 				/**
 				 * @var WP_Error $intent
@@ -60,6 +75,9 @@ class WC_Stripe_Payment_Intent extends WC_Stripe_Payment {
 
 				return $intent;
 			}
+			// The payment method is attached during confirmation when a confirmation token is used.
+			$order->update_meta_data( WC_Stripe_Constants::PAYMENT_METHOD_TOKEN, is_object( $intent->payment_method ) ? $intent->payment_method->id : $intent->payment_method );
+			$order->save();
 		}
 		// the intent was processed.
 		if ( $intent->status === 'succeeded' || $intent->status === 'requires_capture' ) {
@@ -340,7 +358,7 @@ class WC_Stripe_Payment_Intent extends WC_Stripe_Payment {
 				$payment_intent_id = $session_intent['id'];
 			}
 		}
-		$intent = $payment_intent_id ? $this->client->paymentIntents->retrieve( $payment_intent_id, apply_filters( 'wc_stripe_payment_intent_retrieve_args', [], $order, $payment_intent_id ) ) : false;
+		$intent = $payment_intent_id ? $this->client->mode( $order )->paymentIntents->retrieve( $payment_intent_id, apply_filters( 'wc_stripe_payment_intent_retrieve_args', [], $order, $payment_intent_id ) ) : false;
 		if ( $intent && ! is_wp_error( $intent ) ) {
 			// If an intent is cancelled, then it's likely that it timed out and can't be used.
 			if ( $intent->status === 'canceled' ) {
@@ -360,9 +378,9 @@ class WC_Stripe_Payment_Intent extends WC_Stripe_Payment {
 			} elseif ( ! empty( $intent['customer'] ) && wc_stripe_get_customer_id( $order->get_customer_id() ) !== $intent['customer'] ) {
 				$intent = false;
 			}
-			// compare the active environment to the order's environment
+			// compare the active environment to the order's environment. Webhooks use the order's own mode.
 			$mode = wc_stripe_order_mode( $order );
-			if ( $mode && $mode !== wc_stripe_mode() ) {
+			if ( $mode && $mode !== wc_stripe_mode() && ! wc_stripe_is_processing_webhook() ) {
 				$intent = false;
 			}
 		} else {

@@ -13,7 +13,7 @@ use PaymentPlugins\Vendor\Stripe\PaymentIntent;
 
 class InstallmentController {
 	/**
-	 * @var \StripeClient
+	 * @var \PaymentPlugins\Stripe\Client\StripeClient
 	 */
 	private $client;
 	/**
@@ -30,7 +30,7 @@ class InstallmentController {
 	private $formatter;
 
 	/**
-	 * @param \StripeClient                $client
+	 * @param \PaymentPlugins\Stripe\Client\StripeClient $client
 	 * @param \WC_Stripe_Advanced_Settings $advanced_settings
 	 * @param \WC_Stripe_Account_Settings  $account_settings
 	 */
@@ -386,7 +386,7 @@ class InstallmentController {
 		 * Loop through the modes and enable installments
 		 */
 		/**
-		 * @var \StripeClient $client
+		 * @var \PaymentPlugins\Stripe\Client\StripeClient $client
 		 */
 		$client      = wc_stripe_get_container()->get( StripeClient::class );
 		$application = wc_stripe_get_container()->get( 'CLIENT_ID' );

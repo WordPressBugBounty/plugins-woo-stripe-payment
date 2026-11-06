@@ -32,7 +32,7 @@ class RetryManager {
 
 	/**
 	 * @param \WC_Order                                                                           $order
-	 * @param \StripeClient                                                                       $client
+	 * @param \PaymentPlugins\Stripe\Client\StripeClient                                          $client
 	 * @param \WP_Error|\PaymentPlugins\Stripe\WooCommerceSubscriptions\Controllers\PaymentIntent $result
 	 * @param array                                                                               $params
 	 *

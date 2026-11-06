@@ -178,6 +178,9 @@ class PaymentsApi {
 		$this->container->register( Gateways\WeroPayment::class, function ( Container $container ) {
 			return new Gateways\WeroPayment( $container->get( 'BLOCK_ASSETS' ) );
 		} );
+		$this->container->register( Gateways\BacsPayment::class, function ( Container $container ) {
+			return new Gateways\BacsPayment( $container->get( 'BLOCK_ASSETS' ) );
+		} );
 		$this->container->register( Gateways\UniversalPayment::class, function ( Container $container ) {
 			return new Gateways\UniversalPayment(
 				$container->get( 'BLOCK_ASSETS' ),
@@ -236,6 +239,7 @@ class PaymentsApi {
 			Gateways\ScalapayPayment::class,
 			Gateways\MBWayPayment::class,
 			Gateways\WeroPayment::class,
+			Gateways\BacsPayment::class,
 		);
 
 		foreach ( $payment_methods as $clazz ) {
@@ -284,6 +288,7 @@ class PaymentsApi {
 			$this->assets_registry->add( 'stripeGeneralData', apply_filters( 'wc_stripe_blocks_general_data', [
 				'page'           => $context->get_context(),
 				'mode'           => wc_stripe_mode(),
+				'elementMode'    => $this->container->get( PaymentIntentController::class )->get_element_options()['mode'],
 				'publishableKey' => wc_stripe_get_publishable_key(),
 				'stripeParams'   => [
 					'stripeAccount'  => wc_stripe_get_account_id(),

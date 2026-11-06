@@ -131,7 +131,7 @@ return array(
 		'class'             => 'showAdaptivePricingModal',
 		'app_id'            => 'adaptive-pricing-app',
 		'default'           => array(
-			'enabled'                    => 'no',
+			'enabled'                    => 'yes',
 			'currency_selector_position' => 'above_payment_methods',
 		),
 		'sanitize_callback' => function ( $value ) {

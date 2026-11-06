@@ -1303,11 +1303,15 @@ function wc_stripe_get_site_locale() {
 }
 
 /**
+ * Returns true while a webhook or a deferred webhook job is being processed.
+ *
  * @return bool
  * @since 3.3.60
+ * <br/><strong>4.0.20</strong> - Includes the deferred webhook job.
  */
 function wc_stripe_is_processing_webhook() {
-	return defined( WC_Stripe_Constants::WOOCOMMERCE_STRIPE_PROCESSING_WEBHOOK );
+	return defined( WC_Stripe_Constants::WOOCOMMERCE_STRIPE_PROCESSING_WEBHOOK )
+	       || doing_action( 'wc_stripe_process_deferred_webhook' );
 }
 
 /**

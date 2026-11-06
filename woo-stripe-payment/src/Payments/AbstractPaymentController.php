@@ -16,7 +16,8 @@ abstract class AbstractPaymentController {
 	 */
 	public function process_setup_intent( \WC_Order $order, AbstractGateway $payment_method ) {
 		try {
-			$setup_intent_id = $order->get_meta( WC_Stripe_Constants::SETUP_INTENT_ID );
+			$setup_intent_id    = $order->get_meta( WC_Stripe_Constants::SETUP_INTENT_ID );
+			$confirmation_token = $payment_method->get_confirmation_token_from_request();
 			if ( ! $setup_intent_id ) {
 				// create the setup intent
 				$payment_method_id = $payment_method->get_payment_method_from_request( $order );
@@ -27,7 +28,7 @@ abstract class AbstractPaymentController {
 						'gateway_id' => $payment_method->id,
 						'order_id'   => $order->get_id()
 					],
-					'confirm'              => (bool) $payment_method_id,
+					'confirm'              => $payment_method_id || $confirmation_token,
 					'expand'               => [ 'payment_method' ]
 				];
 				/**
@@ -44,10 +45,16 @@ abstract class AbstractPaymentController {
 				 */
 				if ( $payment_method_id ) {
 					$args['payment_method'] = $payment_method_id;
+				} elseif ( $confirmation_token ) {
+					// The payment method is created from the confirmation token during confirmation.
+					$args['confirmation_token'] = $confirmation_token;
 				}
 				if ( $args['confirm'] === true ) {
 					$args['return_url'] = $payment_method->get_complete_payment_return_url( $order );
-					$payment_method->add_payment_intent_mandate_args( $args, $order );
+					// A confirmation token already contains the mandate data.
+					if ( ! $confirmation_token ) {
+						$payment_method->add_payment_intent_mandate_args( $args, $order );
+					}
 				}
 				if ( ( $customer_id = wc_stripe_get_customer_id( $order->get_customer_id() ) ) ) {
 					$args['customer'] = $customer_id;
@@ -55,9 +62,12 @@ abstract class AbstractPaymentController {
 					$args['customer'] = $customer_id;
 				}
 				$payment_method->add_stripe_order_args( $args, $order );
-				$setup_intent = $payment_method->client->mode( $order )->setupIntents->create(
-					apply_filters( 'wc_stripe_setup_intent_params', $args, $order, $payment_method )
-				);
+				$args = apply_filters( 'wc_stripe_setup_intent_params', $args, $order, $payment_method );
+				// A confirmation token already contains the mandate data.
+				if ( ! empty( $args['confirmation_token'] ) ) {
+					unset( $args['mandate_data'] );
+				}
+				$setup_intent = $payment_method->client->mode( $order )->setupIntents->create( $args );
 				if ( is_wp_error( $setup_intent ) ) {
 					/**
 					 * @var \WP_Error $setup_intent
@@ -80,7 +90,23 @@ abstract class AbstractPaymentController {
 				}
 
 				// only update setup intents that don't have a succeeded status.
-				if ( $setup_intent->status !== 'succeeded' ) {
+				if ( $setup_intent->status !== 'succeeded' && $confirmation_token ) {
+					$args         = [
+						'confirmation_token' => $confirmation_token,
+						'return_url'         => $payment_method->get_complete_payment_return_url( $order ),
+						'expand'             => [ 'payment_method' ]
+					];
+					$args = apply_filters( 'wc_stripe_confirm_setup_intent_params', $args, $order, $payment_method );
+					// A confirmation token already contains the mandate data.
+					unset( $args['mandate_data'] );
+					$setup_intent = $payment_method->client->mode( $order )->setupIntents->confirm( $setup_intent_id, $args );
+					if ( is_wp_error( $setup_intent ) ) {
+						/**
+						 * @var \WP_Error $setup_intent
+						 */
+						throw new \Exception( $setup_intent->get_error_message() );
+					}
+				} elseif ( $setup_intent->status !== 'succeeded' ) {
 					$args         = [
 						'payment_method'       => $payment_method->get_payment_method_from_request( $order ),
 						'payment_method_types' => [ $payment_method->get_payment_method_type() ]

@@ -82,8 +82,16 @@ function wc_stripe_process_payment_intent_succeeded( $intent, $request, $event )
 
 		$payment_method->set_order_lock( $order );
 		$order->update_meta_data( WC_Stripe_Constants::PAYMENT_INTENT, WC_Stripe_Utils::sanitize_intent( $intent->toArray() ) );
+		// can_use_payment_intent() retrieves the intent using this meta, so it must be set.
+		if ( ! $order->get_meta( WC_Stripe_Constants::PAYMENT_INTENT_ID ) ) {
+			$order->update_meta_data( WC_Stripe_Constants::PAYMENT_INTENT_ID, $intent->id );
+			$order->save();
+		}
 		$result = $payment_method->payment_controller->process_payment( $order );
-		if ( ! is_wp_error( $result ) && $result->complete_payment ) {
+		if ( is_wp_error( $result ) ) {
+			// Release the lock so a resent event can be processed.
+			$payment_method->release_order_lock( $order );
+		} elseif ( $result->complete_payment ) {
 			$payment_method->payment_controller->payment_complete( $order, $result->charge );
 			$order->add_order_note( __( 'payment_intent.succeeded webhook received. Payment has been completed.', 'woo-stripe-payment' ) );
 		}

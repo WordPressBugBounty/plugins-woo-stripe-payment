@@ -87,11 +87,11 @@ defined( 'ABSPATH' ) || exit;
                 </thead>
                 <tbody>
 				<?php foreach ( self::get_bnpl_gateways() as $gateway ) : ?>
-                    <tr data-gateway_id="<?php echo esc_attr( $gateway->id ); ?>">
+                    <tr data-gateway_id="<?php echo esc_attr( $gateway->id ); ?>" data-type="message">
                         <td><?php echo esc_html( $gateway->get_method_title() ); ?></td>
                         <td>
                             <a class="wc-stripe-product-gateway-enabled" href="#">
-                                <span class="woocommerce-input-toggle woocommerce-input-toggle--<?php echo self::get_bnpl_option( $gateway->id )->enabled() ? 'enabled' : 'disabled'; ?>"></span>
+                                <span class="woocommerce-input-toggle woocommerce-input-toggle--<?php echo self::get_bnpl_option( $gateway->id )->message_enabled() ? 'enabled' : 'disabled'; ?>"></span>
                             </a>
                         </td>
                     </tr>

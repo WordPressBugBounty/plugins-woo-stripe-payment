@@ -38,6 +38,8 @@ class DeferredWebhookHandler {
 						if ( ! is_wp_error( $result ) && $result->complete_payment ) {
 							$payment_method->payment_controller->payment_complete( $order, $result->charge );
 						}
+						// The synchronous flow this lock guards against has already finished, so release it.
+						$payment_method->release_order_lock( $order );
 					}
 				}
 				break;

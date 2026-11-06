@@ -224,7 +224,7 @@ abstract class WC_Payment_Gateway_Stripe_Local_Payment extends WC_Payment_Gatewa
 		global $wp;
 		$_available = false;
 		$total      = $this->get_order_total();
-		$order = isset( $wp->query_vars['order-pay'] ) ? wc_get_order( absint( $wp->query_vars['order-pay'] ) ) : false;
+		$order      = isset( $wp->query_vars['order-pay'] ) ? wc_get_order( absint( $wp->query_vars['order-pay'] ) ) : false;
 		if ( $order instanceof \WC_Order ) {
 			$currency        = $order->get_currency();
 			$billing_country = $order->get_billing_country();
@@ -257,10 +257,12 @@ abstract class WC_Payment_Gateway_Stripe_Local_Payment extends WC_Payment_Gatewa
 		/**
 		 * @param array
 		 * @param WC_Payment_Gateway_Stripe_Local_Payment
+		 * @param float $total
+		 * @param string $currency
 		 *
 		 * @since 3.2.10
 		 */
-		return apply_filters( 'wc_stripe_local_payment_available', $_available, $this );
+		return apply_filters( 'wc_stripe_local_payment_available', $_available, $this, $total, $currency );
 	}
 
 	/**

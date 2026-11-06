@@ -6,7 +6,6 @@ namespace PaymentPlugins\Stripe\Blocks\Payments;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
 use PaymentPlugins\Stripe\Blocks\StoreApi\EndpointData;
 use PaymentPlugins\Stripe\Controllers\PaymentIntentController;
-use PaymentPlugins\Stripe\RequestContext;
 
 /**
  * Class AbstractLocalStripePayment
@@ -82,7 +81,6 @@ abstract class AbstractStripeLocalPayment extends AbstractStripePayment {
 		 * @var PaymentIntentController $payment_intent_ctrl
 		 */
 		$payment_intent_ctrl = wc_stripe_get_container()->get( PaymentIntentController::class );
-		$payment_intent_ctrl->set_request_context( new RequestContext( RequestContext::CHECKOUT ) );
 		if ( method_exists( $this->payment_method, 'get_payment_method_type' ) ) {
 			return [
 				'elementOptions' => array_merge(

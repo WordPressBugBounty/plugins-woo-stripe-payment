@@ -13,21 +13,18 @@ class PaymentGatewaysController {
 	private $registry;
 	private $context_handler;
 	private $check_payment_availability = false;
-
 	/**
 	 * Script handles enqueued by enqueue_scripts(), keyed by context.
 	 *
 	 * @var array
 	 */
 	private $enqueued_script_handles = [];
-
 	/**
 	 * Contexts whose classic (shortcode) template has rendered on this request.
 	 *
 	 * @var array
 	 */
 	private $rendered_shortcode_contexts = [];
-
 	/**
 	 * Contexts whose scripts were dequeued by dequeue_scripts().
 	 *
@@ -58,6 +55,7 @@ class PaymentGatewaysController {
 		add_filter( 'woocommerce_available_payment_gateways', [ $this, 'filter_available_payment_gateways' ] );
 		add_action( 'wc_stripe_add_script_data', [ $this, 'add_payment_gateway_data' ], 10, 2 );
 		add_filter( 'wc_stripe_cart_data', [ $this, 'add_cart_data' ] );
+		add_action( 'wc_stripe_account_settings_saved', [ $this, 'handle_account_settings_saved' ], 10, 2 );
 	}
 
 	public function get_payment_gateway_classes() {
@@ -101,7 +99,8 @@ class PaymentGatewaysController {
 			'WC_Payment_Gateway_Stripe_Satispay',
 			'WC_Payment_Gateway_Stripe_Scalapay',
 			'WC_Payment_Gateway_Stripe_MBWay',
-			'WC_Payment_Gateway_Stripe_Wero'
+			'WC_Payment_Gateway_Stripe_Wero',
+			'WC_Payment_Gateway_Stripe_Bacs'
 		) );
 	}
 
@@ -148,7 +147,6 @@ class PaymentGatewaysController {
 				'add_payment_method',
 				'order_pay'
 			] ) || apply_filters( 'wc_stripe_checkout_scripts', false ) ) {
-
 			if ( $this->context_handler->is_add_payment_method() ) {
 				$handles = $this->registry->get_add_payment_method_script_handles();
 			} else {
@@ -327,7 +325,7 @@ class PaymentGatewaysController {
 				'description'       => $integration->get_description(),
 				'hasPaymentTokens'  => ! is_add_payment_method_page() && ! empty( $integration->get_tokens() ),
 				'termsDisplayRule'  => $terms_rule,
-				'isVoucher'         => $integration->is_voucher_payment,
+				'isVoucher'         => $integration->is_voucher_payment
 			], $integration->get_payment_method_data() );
 			$payment_methods[ $integration->id ] = [
 				'enabled'           => wc_string_to_bool( $integration->enabled ),
@@ -369,9 +367,7 @@ class PaymentGatewaysController {
 			// 'id' is intentionally omitted - the array is already keyed by it, and the only
 			// consumer (Cart.js's isPaymentMethodAvailable()) looks up by key and reads
 			// nothing but .available.
-			$data['paymentMethods'][ $integration->id ] = [
-				'available' => isset( $available_gateways[ $integration->id ] )
-			];
+			$data['paymentMethods'][ $integration->id ] = [ 'available' => isset( $available_gateways[ $integration->id ] ) ];
 			/**
 			 * The check_payment_availability property was added so that code in other locations could
 			 * affect if is_local_payment_available is calculated. A good example of this is in
@@ -411,65 +407,168 @@ class PaymentGatewaysController {
 		if ( ! isset( $posted_data[ $key ] ) || 'no' === $posted_data[ $key ] ) {
 			return;
 		}
+		$this->update_payment_method_configurations( [ $gateway ] );
+	}
+
+	/**
+	 * Turns on the given gateways in the plugin's payment method configuration and stores its ID,
+	 * for each connected mode.
+	 *
+	 * @param AbstractGateway[] $gateways
+	 *
+	 * @return void
+	 * @since 4.0.20
+	 */
+	public function update_payment_method_configurations( array $gateways ) {
+		foreach ( [ 'live', 'test' ] as $mode ) {
+			$this->update_payment_method_configuration( $mode, $gateways );
+		}
+	}
+
+	/**
+	 * Refreshes the stored payment method configuration whenever the connected account changes.
+	 *
+	 * @param \WC_Stripe_Account_Settings $account_settings
+	 * @param string                      $mode
+	 *
+	 * @return void
+	 * @since 4.0.20
+	 */
+	public function handle_account_settings_saved( $account_settings, $mode ) {
+		$this->update_payment_method_configuration( $mode, $this->get_enabled_express_gateways() );
+	}
+
+	/**
+	 * @return AbstractGateway[]
+	 * @since 4.0.20
+	 */
+	public function get_enabled_express_gateways() {
+		if ( $this->registry->is_empty() ) {
+			$this->registry->initialize();
+		}
+
+		// wc_stripe_banner_checkout comes from ExpressCheckoutTrait, used by every Express Checkout Element gateway.
+		return array_values( array_filter( $this->registry->get_active_integrations(), function ( $gateway ) {
+			return $gateway->supports( 'wc_stripe_banner_checkout' );
+		} ) );
+	}
+
+	/**
+	 * Resolves the plugin's payment method configuration for the mode, turns on the given gateways in
+	 * it, then stores its ID. Only ever turns payment methods on - the configuration may be used
+	 * elsewhere, so a gateway disabled in the plugin is left as-is.
+	 *
+	 * @param string            $mode
+	 * @param AbstractGateway[] $gateways
+	 *
+	 * @return void
+	 */
+	private function update_payment_method_configuration( $mode, array $gateways ) {
 		/**
-		 * @var \StripeClient $client
+		 * @var \PaymentPlugins\Stripe\Client\StripeClient $client
 		 */
-		$client           = wc_stripe_get_container()->get( StripeClient::class );
-		$application      = wc_stripe_get_container()->get( 'CLIENT_ID' );
-		$test_application = wc_stripe_get_container()->get( 'TEST_CLIENT_ID' );
-		// Guard against other plugins that use outdated Stripe PHP SDK
-		if ( isset( $client->paymentMethodConfigurations ) ) {
-			$modes = [ 'live', 'test' ];
-			foreach ( $modes as $mode ) {
-				$client->mode( $mode );
-				if ( ! $client->is_connected() ) {
-					continue;
-				}
-				// fetch the payment method configurations
-				$result = $client->paymentMethodConfigurations->all( [ 'limit' => 50 ] );
-				if ( ! is_wp_error( $result ) && ! empty( $result->data ) ) {
-					// Find the config associated with the application - always takes priority,
-					// regardless of result order, since Stripe rejects updates to a configuration
-					// we don't own. Test mode also recognizes TEST_CLIENT_ID (a separate
-					// application historically used only for test-mode OAuth connections - see
-					// its registration in Plugin.php), and falls back to an unowned default
-					// configuration if neither matches - but never one owned by a different
-					// application.
-					$owned_applications = $mode === 'test' ? [ $application, $test_application ] : [ $application ];
-					$pmc                = null;
-					$default_pmc        = null;
-					foreach ( $result->data as $item ) {
-						if ( in_array( $item->application, $owned_applications ) ) {
-							$pmc = $item;
-							break;
-						} elseif ( $mode === 'test' && empty( $item->application ) && $item->is_default ) {
-							$default_pmc = $default_pmc ?: $item;
-						}
-					}
-					$pmc = $pmc ?: $default_pmc;
-					if ( $pmc ) {
-						switch ( $gateway->id ) {
-							case 'stripe_applepay':
-								$pmc_key = 'apple_pay';
-								break;
-							case 'stripe_googlepay':
-								$pmc_key = 'google_pay';
-								break;
-							default:
-								$pmc_key = $gateway->get_payment_method_type();
-						}
-						if ( ! isset( $pmc[ $pmc_key ] ) ) {
-							continue;
-						}
-						$result = $client->paymentMethodConfigurations->update( $pmc->id, [ $pmc_key => [ 'display_preference' => [ 'preference' => 'on' ] ] ] );
-						if ( is_wp_error( $result ) ) {
-							wc_stripe_log_error( sprintf( 'Error updating payment method configuration %s. %s', $pmc->id, $result->get_error_message() ) );
-						} else {
-							wc_stripe_log_info( sprintf( 'Payment method configuration %s updated from admin options. %s->display_preference->preference = on', $pmc->id, $pmc_key ) );
-						}
-					}
-				}
+		$client = wc_stripe_get_container()->get( StripeClient::class )->mode( $mode );
+		if ( ! $client->is_connected() ) {
+			return;
+		}
+		$pmc = $this->resolve_payment_method_configuration( $client, $mode );
+		// Leave the stored ID alone on an API error so a transient failure doesn't drop a valid one.
+		if ( is_wp_error( $pmc ) ) {
+			return;
+		}
+		$account_settings = wc_stripe_get_container()->get( \WC_Stripe_Account_Settings::class );
+		if ( ! $pmc ) {
+			$this->save_payment_method_configuration( $account_settings, $mode, '' );
+
+			return;
+		}
+		$params = [];
+		foreach ( $gateways as $gateway ) {
+			$pmc_key = $this->get_payment_method_configuration_key( $gateway );
+			// Only payment methods the configuration supports, and that aren't already on.
+			if ( isset( $pmc[ $pmc_key ] ) && $pmc[ $pmc_key ]->display_preference->preference !== 'on' ) {
+				$params[ $pmc_key ] = [ 'display_preference' => [ 'preference' => 'on' ] ];
 			}
+		}
+		if ( $params ) {
+			$result = $client->paymentMethodConfigurations->update( $pmc->id, $params );
+			if ( is_wp_error( $result ) ) {
+				// Don't store the ID - express Elements would load a configuration with these methods still off.
+				wc_stripe_log_error( sprintf( 'Error updating payment method configuration %s. %s', $pmc->id, $result->get_error_message() ) );
+
+				return;
+			}
+			wc_stripe_log_info( sprintf( 'Payment method configuration %s updated. display_preference->preference = on for: %s', $pmc->id, implode( ', ', array_keys( $params ) ) ) );
+		}
+		$this->save_payment_method_configuration( $account_settings, $mode, $pmc->id );
+	}
+
+	/**
+	 * Fetches the payment method configuration owned by the plugin's application. Test mode also
+	 * recognizes TEST_CLIENT_ID (see its registration in Plugin.php) and falls back to the account's
+	 * unowned default configuration - never one owned by a different application, since Stripe
+	 * rejects updates to those.
+	 *
+	 * @param \PaymentPlugins\Stripe\Client\StripeClient $client
+	 * @param string                                     $mode
+	 *
+	 * @return \PaymentPlugins\Vendor\Stripe\PaymentMethodConfiguration|null|\WP_Error
+	 * @since 4.0.20
+	 */
+	private function resolve_payment_method_configuration( $client, $mode ) {
+		$result = $client->mode( $mode )->paymentMethodConfigurations->all( [ 'limit' => 50 ] );
+		if ( is_wp_error( $result ) ) {
+			/**
+			 * @var \WP_Error $result
+			 */
+			return $result;
+		}
+		$owned_applications = [ wc_stripe_get_container()->get( 'CLIENT_ID' ) ];
+		if ( $mode === 'test' ) {
+			$owned_applications[] = wc_stripe_get_container()->get( 'TEST_CLIENT_ID' );
+		}
+		$pmc         = null;
+		$default_pmc = null;
+		foreach ( $result->data as $item ) {
+			// The owned configuration always wins, regardless of result order.
+			if ( in_array( $item->application, $owned_applications, true ) ) {
+				$pmc = $item;
+				break;
+			} elseif ( $mode === 'test' && empty( $item->application ) && $item->is_default ) {
+				$default_pmc = $default_pmc ?: $item;
+			}
+		}
+
+		return $pmc ?: $default_pmc;
+	}
+
+	/**
+	 * Stores the payment method configuration ID as pmc_{$mode}. An empty ID clears it.
+	 *
+	 * @param \WC_Stripe_Account_Settings $account_settings
+	 * @param string                      $mode
+	 * @param string                      $id
+	 *
+	 * @return void
+	 * @since 4.0.20
+	 */
+	private function save_payment_method_configuration( $account_settings, $mode, $id ) {
+		$account_settings->update_option( "pmc_{$mode}", $id );
+	}
+
+	/**
+	 * @param AbstractGateway $gateway
+	 *
+	 * @return string
+	 */
+	private function get_payment_method_configuration_key( $gateway ) {
+		switch ( $gateway->id ) {
+			case 'stripe_applepay':
+				return 'apple_pay';
+			case 'stripe_googlepay':
+				return 'google_pay';
+			default:
+				return $gateway->get_payment_method_type();
 		}
 	}
 }

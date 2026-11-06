@@ -16,6 +16,7 @@ class WC_Payment_Gateway_Stripe_GooglePay extends WC_Payment_Gateway_Stripe {
 
 	use WC_Stripe_Payment_Intent_Trait;
 	use \PaymentPlugins\Stripe\Traits\TokenizationTrait;
+	use \PaymentPlugins\Stripe\Traits\ExpressCheckoutTrait;
 	use \PaymentPlugins\Stripe\WooCommercePreOrders\Traits\PreOrdersTrait;
 	use \PaymentPlugins\Stripe\WooCommerceSubscriptions\Traits\WooCommerceSubscriptionsTrait;
 
@@ -32,14 +33,6 @@ class WC_Payment_Gateway_Stripe_GooglePay extends WC_Payment_Gateway_Stripe {
 		$this->has_digital_wallet = true;
 		parent::__construct( ...$args );
 		$this->icon = $this->assets->assets_url( 'img/' . $this->get_option( 'icon' ) . '.svg' );
-	}
-
-	public function init_supports() {
-		parent::init_supports();
-		$this->supports[] = 'wc_stripe_cart_checkout';
-		$this->supports[] = 'wc_stripe_product_checkout';
-		$this->supports[] = 'wc_stripe_banner_checkout';
-		$this->supports[] = 'wc_stripe_mini_cart_checkout';
 	}
 
 	protected function get_element_selector() {

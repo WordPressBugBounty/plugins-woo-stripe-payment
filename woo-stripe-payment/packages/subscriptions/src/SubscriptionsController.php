@@ -25,10 +25,27 @@ class SubscriptionsController {
 	 */
 	private $registry;
 
-	public function __construct( PaymentController $payment_controller, ContextHandler $context_handler, PaymentGatewayRegistry $registry ) {
+	/**
+	 * @var FrontendRequests
+	 */
+	private $requests;
+
+	/**
+	 * Guards against re-entrant calculate_totals() calls. Some third-party plugins (e.g. German
+	 * Market) query get_available_payment_gateways() from a woocommerce_cart_calculate_fees
+	 * callback; since that hook fires from within calculate_totals(), and is_available() can reach
+	 * get_recurring_cart_total() below, an unguarded nested call recalculates totals -> re-fires
+	 * woocommerce_cart_calculate_fees -> re-enters is_available() indefinitely.
+	 *
+	 * @since 4.0.9
+	 */
+	private $calculating_recurring_total = false;
+
+	public function __construct( PaymentController $payment_controller, ContextHandler $context_handler, PaymentGatewayRegistry $registry, FrontendRequests $requests ) {
 		$this->payment_controller = $payment_controller;
 		$this->context_handler    = $context_handler;
 		$this->registry           = $registry;
+		$this->requests           = $requests;
 	}
 
 	public function initialize() {
@@ -61,6 +78,13 @@ class SubscriptionsController {
 		add_action( 'woocommerce_subscriptions_paid_for_failed_renewal_order', [ $this, 'maybe_update_payment_method' ], 10, 2 );
 
 		add_filter( 'wc_stripe_adaptive_pricing_is_available', [ $this, 'maybe_disable_adaptive_pricing' ] );
+
+		add_filter( 'wc_stripe_local_payment_available', [ $this, 'validate_max_off_session_amount' ], 10, 4 );
+
+		if ( function_exists( 'wcs_is_manual_renewal_enabled' ) && wcs_is_manual_renewal_enabled() ) {
+			add_filter( 'wc_stripe_payment_gateway_order_total', [ $this, 'maybe_use_subscription_total' ], 10, 2 );
+			add_filter( 'wc_stripe_cart_data', [ $this, 'add_recurring_total_to_cart_data' ] );
+		}
 	}
 
 	public function register_gateways( PaymentGatewayRegistry $registry ) {
@@ -465,5 +489,144 @@ class SubscriptionsController {
 		}
 
 		return $packages;
+	}
+
+	/**
+	 * Gateways that don't support 'subscriptions' still become valid choices once manual renewals
+	 * are enabled - the renewal is just a manual "pay this invoice" flow instead of an automatic
+	 * off-session charge. But WC_Payment_Gateway::get_order_total() (and any availability check
+	 * built on it, e.g. WC_Payment_Gateway_Stripe_Local_Payment::is_local_payment_available()) uses
+	 * the live cart/order total, which is 0 during a free trial - failing gateways' own min/max
+	 * amount checks and hiding them even though nothing is actually due today. Substitute the
+	 * subscription's real recurring total so those checks evaluate against a meaningful amount.
+	 *
+	 * @param float                      $total
+	 * @param \WC_Payment_Gateway_Stripe $gateway
+	 *
+	 * @return float
+	 * @since 4.0.7
+	 */
+	public function maybe_use_subscription_total( $total, $gateway ) {
+		if ( $total > 0 ) {
+			return $total;
+		}
+
+		if ( $this->context_handler->is_order_pay() ) {
+			$order = $this->context_handler->get_order_from_query();
+			if ( ! $order instanceof \WC_Order ) {
+				return $total;
+			}
+			$subscriptions = wcs_get_subscriptions_for_order( $order );
+			if ( ! $subscriptions ) {
+				return $total;
+			}
+
+			return max( array_map( function ( $subscription ) {
+				return (float) $subscription->get_total();
+			}, $subscriptions ) );
+		}
+
+		$recurring_total = $this->get_recurring_cart_total();
+
+		return $recurring_total > 0 ? $recurring_total : $total;
+	}
+
+	/**
+	 * Hides a gateway when the subscription's recurring total exceeds the gateway's off-session limit,
+	 * since the renewal would be declined.
+	 *
+	 * @param bool                       $available
+	 * @param \WC_Payment_Gateway_Stripe $gateway
+	 * @param float                      $total
+	 * @param string                     $currency
+	 *
+	 * @return bool
+	 * @since 4.0.20
+	 */
+	public function validate_max_off_session_amount( $available, $gateway, $total, $currency ) {
+		if ( ! $available || ! $gateway->supports( 'subscriptions' ) ) {
+			return $available;
+		}
+
+		$max_amount = $gateway->get_max_off_session_amount( $currency );
+		if ( null === $max_amount ) {
+			return $available;
+		}
+
+		$order = $this->context_handler->is_order_pay() ? $this->context_handler->get_order_from_query() : null;
+
+		if ( $order instanceof \WC_Order ) {
+			// For a subscription (change payment method), $total is already the subscription's total.
+			if ( ! wcs_is_subscription( $order ) ) {
+				$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => 'any' ] );
+				if ( ! $subscriptions ) {
+					return $available;
+				}
+				$total = max( array_map( function ( $subscription ) {
+					return (float) $subscription->get_total();
+				}, $subscriptions ) );
+			}
+		} else {
+			if ( ! $this->requests->cart_contains_subscription() ) {
+				return $available;
+			}
+			$total = $this->get_recurring_cart_total();
+		}
+
+		return $total <= $max_amount;
+	}
+
+	/**
+	 * Exposes the recurring cart total to the client so it can be used as a stand-in amount for
+	 * gateways that don't support 'subscriptions' when the live cart total is 0 (free trial) - the
+	 * cart's line items alone don't account for this correctly client-side, since shipping/tax on
+	 * the live cart reflect today's (trial-zeroed) totals while the recurring cart's totals reflect
+	 * what will actually be charged going forward.
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 * @since 4.0.7
+	 */
+	public function add_recurring_total_to_cart_data( $data ) {
+		$data['recurringTotalCents'] = wc_stripe_add_number_precision( $this->get_recurring_cart_total(), $data['currency'] );
+
+		return $data;
+	}
+
+	/**
+	 * The Store API's Checkout::update_session_from_request()/update_order_from_request() validate
+	 * the selected payment method (via get_available_payment_gateways() -> is_available()) before
+	 * recalculating cart totals - so recurring_carts isn't populated yet the first time this runs
+	 * in that request. Trigger the calculation ourselves rather than guessing at which specific
+	 * request/route needs it; this only actually recalculates once per request, since recurring_carts
+	 * stays populated for every gateway checked afterward.
+	 *
+	 * @return float
+	 * @since 4.0.7
+	 */
+	private function get_recurring_cart_total() {
+		if ( ! WC()->cart ) {
+			return 0;
+		}
+		if ( ( empty( WC()->cart->recurring_carts ) || ! is_array( WC()->cart->recurring_carts ) )
+		     && \WC_Subscriptions_Cart::cart_contains_subscription() ) {
+			if ( $this->calculating_recurring_total ) {
+				return 0;
+			}
+			$this->calculating_recurring_total = true;
+			try {
+				WC()->cart->calculate_totals();
+			} finally {
+				$this->calculating_recurring_total = false;
+			}
+		}
+		if ( empty( WC()->cart->recurring_carts ) || ! is_array( WC()->cart->recurring_carts ) ) {
+			return 0;
+		}
+
+		return max( array_map( function ( $recurring_cart ) {
+			return (float) $recurring_cart->total;
+		}, WC()->cart->recurring_carts ) );
 	}
 }

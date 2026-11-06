@@ -17,7 +17,7 @@ class BasePaymentGateway {
 	 */
 	protected $payment_controller;
 	/**
-	 * @var \StripeClient
+	 * @var \PaymentPlugins\Stripe\Client\StripeClient
 	 */
 	protected $client;
 	/**

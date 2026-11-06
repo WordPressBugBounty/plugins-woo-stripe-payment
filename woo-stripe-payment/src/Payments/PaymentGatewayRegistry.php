@@ -142,7 +142,7 @@ class PaymentGatewayRegistry extends BaseRegistry {
 			}
 
 			if ( $context->is_product() ) {
-				if ( ! $gateway->is_product_section_enabled( $context->get_product_id() ) ) {
+				if ( ! $gateway->is_product_message_enabled( $context->get_product_id() ) ) {
 					continue;
 				}
 				if ( \wc_string_to_bool( $gateway->get_option( 'message_enabled', 'yes' ) ) ) {

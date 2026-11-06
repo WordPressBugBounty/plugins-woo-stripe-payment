@@ -2,6 +2,9 @@
 
 namespace PaymentPlugins\Stripe;
 
+/**
+ * @deprecated 4.0.20 Use ContextHandler instead.
+ */
 class RequestContext {
 
 	const CART = 'cart';

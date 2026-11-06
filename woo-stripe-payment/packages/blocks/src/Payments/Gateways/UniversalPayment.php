@@ -8,7 +8,6 @@ use PaymentPlugins\Stripe\Assets\AssetsApi;
 use PaymentPlugins\Stripe\Blocks\StoreApi\EndpointData;
 use PaymentPlugins\Stripe\Controllers\PaymentIntentController;
 use PaymentPlugins\Stripe\Installments\InstallmentController;
-use PaymentPlugins\Stripe\RequestContext;
 
 class UniversalPayment extends \PaymentPlugins\Stripe\Blocks\Payments\AbstractStripePayment {
 
@@ -82,8 +81,6 @@ class UniversalPayment extends \PaymentPlugins\Stripe\Blocks\Payments\AbstractSt
 	}
 
 	public function get_cart_extension_data() {
-		$this->payment_intent_ctrl->set_request_context( new RequestContext( RequestContext::CHECKOUT ) );
-
 		$data = [
 			'elementOptions' => $this->payment_method->get_element_options()
 		];

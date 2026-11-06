@@ -45,6 +45,13 @@ class ProductData extends AbstractAdminRoute {
 		$product        = wc_get_product( $request->get_param( 'product_id' ) );
 		$payment_method = WC()->payment_gateways()->payment_gateways()[ $request->get_param( 'gateway_id' ) ];
 		$option         = new \WC_Stripe_Product_Gateway_Option( $product, $payment_method );
+		// The BNPL message and the payment button are toggled separately.
+		if ( 'message' === $request->get_param( 'type' ) ) {
+			$option->set_option( 'message_enabled', ! $option->message_enabled() );
+			$option->save();
+
+			return [ 'enabled' => $option->message_enabled() ];
+		}
 		$option->set_option( 'enabled', ! $option->enabled() );
 		$option->save();
 

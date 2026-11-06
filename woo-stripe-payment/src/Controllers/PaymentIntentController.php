@@ -2,7 +2,7 @@
 
 namespace PaymentPlugins\Stripe\Controllers;
 
-use PaymentPlugins\Stripe\RequestContext;
+use PaymentPlugins\Stripe\ContextHandler;
 
 class PaymentIntentController {
 
@@ -23,20 +23,20 @@ class PaymentIntentController {
 	private $intent_exists;
 
 	/**
-	 * @var RequestContext
+	 * @var ContextHandler
 	 */
-	private $request_context;
+	private $context_handler;
 
 	private $element_options;
 
 	private static $instance;
 
 	/**
-	 * @param       $client
-	 * @param array $payment_method_ids
+	 * @param ContextHandler $context_handler
 	 */
-	public function __construct() {
-		self::$instance = $this;
+	public function __construct( ContextHandler $context_handler ) {
+		$this->context_handler = $context_handler;
+		self::$instance        = $this;
 	}
 
 	public static function instance() {
@@ -49,16 +49,20 @@ class PaymentIntentController {
 		} );
 	}
 
+	/**
+	 * @param $context
+	 *
+	 * @deprecated 4.0.20 Set the context on ContextHandler instead.
+	 */
 	public function set_request_context( $context ) {
-		$this->request_context = $context;
 	}
 
+	/**
+	 * @return ContextHandler
+	 * @deprecated 4.0.20 Use ContextHandler instead.
+	 */
 	public function get_request_context() {
-		if ( ! $this->request_context ) {
-			$this->request_context = new RequestContext();
-		}
-
-		return $this->request_context;
+		return $this->context_handler;
 	}
 
 	public function get_element_options() {
@@ -67,9 +71,6 @@ class PaymentIntentController {
 				'mode'                  => 'payment',
 				'paymentMethodCreation' => 'manual'
 			);
-			if ( ! $this->request_context ) {
-				$this->request_context = new RequestContext();
-			}
 			if ( $this->is_setup_intent_needed() ) {
 				$element_options['mode'] = 'setup';
 			} elseif ( $this->is_subscription_mode() ) {
@@ -82,12 +83,12 @@ class PaymentIntentController {
 	}
 
 	private function is_setup_intent_needed() {
-		return $this->request_context->is_add_payment_method()
-		       || apply_filters( 'wc_stripe_create_setup_intent', false, $this->get_request_context() );
+		return $this->context_handler->is_add_payment_method()
+		       || apply_filters( 'wc_stripe_create_setup_intent', false, $this->context_handler );
 	}
 
 	private function is_subscription_mode() {
-		return apply_filters( 'wc_stripe_deferred_intent_subscription_mode', false, $this->get_request_context() );
+		return apply_filters( 'wc_stripe_deferred_intent_subscription_mode', false, $this->context_handler );
 	}
 
 	private function set_order_pay_constants() {

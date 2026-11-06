@@ -178,6 +178,7 @@ abstract class WC_Payment_Gateway_Stripe extends AbstractLegacyGateway {
 		wc_stripe_token_field( $this );
 		wc_stripe_hidden_field( $this->id . '_setup_intent_id' );
 		wc_stripe_hidden_field( $this->id . '_payment_method_id' );
+		wc_stripe_hidden_field( $this->id . '_confirmation_token' );
 
 		if ( $this->supports( 'tokenization' ) && is_checkout() ) {
 			$this->saved_payment_methods();

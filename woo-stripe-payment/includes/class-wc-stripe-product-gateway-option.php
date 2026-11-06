@@ -72,6 +72,13 @@ class WC_Stripe_Product_Gateway_Option {
 		if ( ! $this->settings && $this->product ) {
 			$this->settings = $this->product->get_meta( $this->get_id() );
 			$this->settings = is_array( $this->settings ) ? $this->settings : array();
+			// Before 4.0.20, BNPL gateways stored the message setting in "enabled". It's saved in the new format on the next save().
+			if ( $this->payment_method->supports( 'stripe_bnpl_msg' )
+			     && array_key_exists( 'enabled', $this->settings )
+			     && ! array_key_exists( 'message_enabled', $this->settings ) ) {
+				$this->settings['message_enabled'] = $this->settings['enabled'];
+				unset( $this->settings['enabled'] );
+			}
 			$this->settings = wp_parse_args( $this->settings, $this->get_default_values() );
 		}
 	}
@@ -82,22 +89,18 @@ class WC_Stripe_Product_Gateway_Option {
 	 * @return array
 	 */
 	public function get_default_values() {
-		if ( $this->payment_method->supports( 'stripe_bnpl_msg' ) ) {
-			$payment_sections = (array) $this->payment_method->get_option( 'message_sections', [] );
-			if ( ! is_array( $payment_sections ) ) {
-				$payment_sections = array();
-			}
-
-			return array(
-				'enabled' => \wc_string_to_bool( $this->payment_method->get_option( 'message_enabled', 'yes' ) )
-				             && in_array( 'product', $payment_sections, true ),
-			);
-		}
-
-		return array(
+		$defaults = array(
 			'enabled'     => $this->payment_method->enabled === 'yes' && $this->payment_method->product_checkout_enabled(),
 			'charge_type' => $this->payment_method->get_option( 'charge_type' ),
 		);
+		if ( $this->payment_method->supports( 'stripe_bnpl_msg' ) ) {
+			$message_sections = (array) $this->payment_method->get_option( 'message_sections', [] );
+
+			$defaults['message_enabled'] = \wc_string_to_bool( $this->payment_method->get_option( 'message_enabled', 'yes' ) )
+			                               && in_array( 'product', $message_sections, true );
+		}
+
+		return $defaults;
 	}
 
 	/**
@@ -117,8 +120,23 @@ class WC_Stripe_Product_Gateway_Option {
 		$this->settings[ $key ] = $value;
 	}
 
+	/**
+	 * Returns true if the payment button is enabled for the product.
+	 *
+	 * @return bool
+	 */
 	public function enabled() {
 		return $this->get_option( 'enabled', false );
+	}
+
+	/**
+	 * Returns true if the BNPL message is enabled for the product.
+	 *
+	 * @return bool
+	 * @since 4.0.20
+	 */
+	public function message_enabled() {
+		return $this->get_option( 'message_enabled', false );
 	}
 
 	/**

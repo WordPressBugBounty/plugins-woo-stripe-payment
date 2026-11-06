@@ -194,9 +194,17 @@ class DataTransformer {
 			$product = $cart_item['data'];
 			$qty     = $cart_item['quantity'];
 			$label   = $qty > 1 ? sprintf( '%s X %s', $product->get_name(), $qty ) : $product->get_name();
-			$price   = $incl_tax
-				? wc_get_price_including_tax( $product, [ 'qty' => $qty ] )
-				: wc_get_price_excluding_tax( $product, [ 'qty' => $qty ] );
+			// Use the calculated line subtotal (pre-discount) so the amount reflects what's charged today,
+			// e.g. $0 for a subscription free trial. Falls back to the product price if totals aren't calculated.
+			if ( isset( $cart_item['line_subtotal'] ) ) {
+				$price = $incl_tax
+					? (float) $cart_item['line_subtotal'] + (float) ( $cart_item['line_subtotal_tax'] ?? 0 )
+					: (float) $cart_item['line_subtotal'];
+			} else {
+				$price = $incl_tax
+					? wc_get_price_including_tax( $product, [ 'qty' => $qty ] )
+					: wc_get_price_excluding_tax( $product, [ 'qty' => $qty ] );
+			}
 			$items[] = [
 				'id'          => $product->get_id(),
 				'label'       => $label,

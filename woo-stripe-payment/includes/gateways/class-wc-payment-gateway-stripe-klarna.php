@@ -17,6 +17,7 @@ class WC_Payment_Gateway_Stripe_Klarna extends WC_Payment_Gateway_Stripe_Local_P
 	use WC_Stripe_Local_Payment_Intent_Trait;
 
 	use \PaymentPlugins\Stripe\Traits\TokenizationTrait;
+	use \PaymentPlugins\Stripe\Traits\ExpressCheckoutTrait;
 	use \PaymentPlugins\Stripe\Traits\BNPLPaymentGatewayTrait;
 	use \PaymentPlugins\Stripe\WooCommercePreOrders\Traits\PreOrdersTrait;
 	use \PaymentPlugins\Stripe\WooCommerceSubscriptions\Traits\WooCommerceSubscriptionsTrait;
@@ -307,10 +308,119 @@ class WC_Payment_Gateway_Stripe_Klarna extends WC_Payment_Gateway_Stripe_Local_P
 					'desc_tip'    => true,
 					'description' => __( 'These are the sections where the Klarna messaging will be enabled.',
 						'woo-stripe-payment' ),
-				)
+				),
+				'payment_sections' => array(
+					'type'        => 'multiselect',
+					'title'       => __( 'Payment Sections', 'woo-stripe-payment' ),
+					'class'       => 'wc-enhanced-select',
+					'options'     => array(
+						'checkout'         => __( 'Checkout', 'woo-stripe-payment' ),
+						'product'          => __( 'Product Page', 'woo-stripe-payment' ),
+						'cart'             => __( 'Cart Page', 'woo-stripe-payment' ),
+						'express_checkout' => __( 'Express Checkout', 'woo-stripe-payment' )
+					),
+					'default'     => array( 'checkout' ),
+					'desc_tip'    => true,
+					'description' => __( 'Checkout shows Klarna in the list of payment methods. Product Page, Cart Page and Express Checkout show the Klarna button on the product page, cart page and at the top of the checkout page.', 'woo-stripe-payment' ),
+				),
+				'button_height'    => array(
+					'title'             => __( 'Button Height', 'woo-stripe-payment' ),
+					'type'              => 'number',
+					'default'           => 50,
+					'custom_attributes' => array(
+						'min'  => 40,
+						'max'  => 55,
+						'step' => 1,
+					),
+					'desc_tip'          => true,
+					'description'       => __( 'Height of the Klarna express button. The button height must be between 40px and 55px.', 'woo-stripe-payment' ),
+					'sanitize_callback' => function ( $value ) {
+						if ( ! is_numeric( $value ) ) {
+							$value = 40;
+						}
+
+						return max( 40, min( 55, absint( $value ) ) );
+					}
+				),
+				'button_radius'    => array(
+					'title'             => __( 'Button Radius', 'woo-stripe-payment' ),
+					'type'              => 'number',
+					'default'           => '4',
+					'desc_tip'          => true,
+					'description'       => __( 'The border radius of the Klarna express button.', 'woo-stripe-payment' ),
+					'sanitize_callback' => function ( $value ) {
+						if ( ! preg_match( '/^[\d]+$/', $value ) ) {
+							$value = 0;
+						}
+
+						return absint( $value );
+					}
+				),
 			),
 			parent::get_local_payment_settings()
 		);
+	}
+
+	/**
+	 * @since 4.0.20
+	 */
+	public function get_payment_method_data() {
+		return array_merge(
+			parent::get_payment_method_data(),
+			[
+				'button' => [
+					'height' => (int) $this->get_option( 'button_height', 50 ),
+					'radius' => $this->get_option( 'button_radius', 4 ) . 'px',
+				]
+			]
+		);
+	}
+
+	/**
+	 * @since 4.0.20
+	 */
+	public function get_express_checkout_script_handles() {
+		$this->assets->register_script( 'wc-stripe-klarna-express-checkout', 'build/klarna-express-checkout.js' );
+
+		return [ 'wc-stripe-klarna-express-checkout' ];
+	}
+
+	/**
+	 * @since 4.0.20
+	 */
+	public function get_product_script_handles() {
+		$this->assets->register_script( 'wc-stripe-klarna-product', 'build/klarna-product.js' );
+
+		return [ 'wc-stripe-klarna-product' ];
+	}
+
+	/**
+	 * @since 4.0.20
+	 */
+	public function get_cart_script_handles() {
+		$this->assets->register_script( 'wc-stripe-klarna-cart', 'build/klarna-cart.js' );
+
+		return [ 'wc-stripe-klarna-cart' ];
+	}
+
+	/**
+	 * @since 4.0.20
+	 */
+	public function product_fields() {
+		?>
+        <div id="wc-<?php echo esc_attr( $this->id ) ?>-product-button"
+             class="wc-<?php echo esc_attr( $this->id ) ?>-product-button"></div>
+		<?php
+	}
+
+	/**
+	 * @since 4.0.20
+	 */
+	public function cart_fields() {
+		?>
+        <div id="wc-<?php echo esc_attr( $this->id ) ?>-cart-button"
+             class="wc-<?php echo esc_attr( $this->id ) ?>-cart-button"></div>
+		<?php
 	}
 
 	/**

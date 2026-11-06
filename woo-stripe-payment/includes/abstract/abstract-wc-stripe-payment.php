@@ -77,6 +77,23 @@ abstract class WC_Stripe_Payment extends \PaymentPlugins\Stripe\Payments\Abstrac
 	public abstract function add_order_payment_method( &$args, $order );
 
 	/**
+	 * Adds the confirmation token created by stripe.createConfirmationToken() to the confirmation args.
+	 *
+	 * @param array    $args
+	 * @param WC_Order $order
+	 *
+	 * @since 4.0.20
+	 */
+	public function add_confirmation_token( &$args, $order ) {
+		$confirmation_token = $this->payment_method->get_confirmation_token_from_request();
+		if ( $confirmation_token ) {
+			$args['confirmation_token'] = $confirmation_token;
+			// The confirmation token already contains the mandate data.
+			unset( $args['mandate_data'] );
+		}
+	}
+
+	/**
 	 *
 	 * @param float    $amount
 	 * @param WC_Order $order

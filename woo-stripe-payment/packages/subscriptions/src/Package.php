@@ -42,7 +42,8 @@ class Package extends AbstractPackage {
 			return new SubscriptionsController(
 				new PaymentController(),
 				$container->get( ContextHandler::class ),
-				$container->get( PaymentGatewayRegistry::class )
+				$container->get( PaymentGatewayRegistry::class ),
+				$container->get( FrontendRequests::class )
 			);
 		} );
 		$this->container->register( FrontendScripts::class, function ( $container ) {

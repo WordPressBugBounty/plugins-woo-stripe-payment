@@ -27,6 +27,37 @@ class WC_Stripe_Account_Settings extends WC_Stripe_Settings_API {
 		add_action( 'woocommerce_update_options_checkout_stripe_api', array( $this, 'pre_api_update' ), 5 );
 		add_action( 'woocommerce_update_options_checkout_stripe_api', array( $this, 'post_api_update' ), 20 );
 		add_action( 'wc_stripe_api_connection_test_success', array( $this, 'connection_test_success' ) );
+		add_action( 'wc_stripe_add_script_data', array( $this, 'add_script_data' ) );
+		add_filter( 'wc_stripe_blocks_general_data', array( $this, 'add_blocks_data' ) );
+	}
+
+	/**
+	 * @param \PaymentPlugins\Stripe\Assets\AssetDataApi $asset_data
+	 *
+	 * @since 4.0.20
+	 */
+	public function add_script_data( $asset_data ) {
+		// Express Elements load the plugin's payment method configuration explicitly - otherwise
+		// Stripe resolves the account's default configuration.
+		$pmc = $this->get_payment_method_configuration();
+		if ( $pmc ) {
+			$asset_data->add( 'paymentMethodConfiguration', $pmc );
+		}
+	}
+
+	/**
+	 * @param array $data
+	 *
+	 * @return array
+	 * @since 4.0.20
+	 */
+	public function add_blocks_data( $data ) {
+		$pmc = $this->get_payment_method_configuration();
+		if ( $pmc ) {
+			$data['paymentMethodConfiguration'] = $pmc;
+		}
+
+		return $data;
 	}
 
 	/**
@@ -131,6 +162,22 @@ class WC_Stripe_Account_Settings extends WC_Stripe_Settings_API {
 		}
 
 		return $id;
+	}
+
+	/**
+	 * Returns the ID of the payment method configuration the plugin manages for the given mode.
+	 *
+	 * @param string $mode
+	 *
+	 * @return string
+	 * @since 4.0.20
+	 */
+	public function get_payment_method_configuration( $mode = '' ) {
+		if ( ! $mode ) {
+			$mode = wc_stripe_mode();
+		}
+
+		return (string) $this->get_option( "pmc_{$mode}", '' );
 	}
 
 	public function delete_account_settings() {

@@ -39,7 +39,7 @@ class CheckoutSessionController {
 	 */
 	const SYNC_SIGNATURE_SESSION_KEY = 'wc_stripe_checkout_session_signature';
 	/**
-	 * @var \StripeClient
+	 * @var \PaymentPlugins\Stripe\Client\StripeClient
 	 */
 	private $client;
 	/**
@@ -516,6 +516,10 @@ class CheckoutSessionController {
 			}
 			$this->session_cache = $session;
 		}
+		// phone_number_collection can't be updated, so a changed phone field requirement needs a new session.
+		if ( ! empty( $session->phone_number_collection->enabled ) !== $this->is_phone_required() ) {
+			return null;
+		}
 		$response = $this->update_session_from_cart( $session_id, $this->session_order_id_is_stale_for_cart( $session ) );
 		if ( is_wp_error( $response ) ) {
 			return null;
@@ -562,6 +566,10 @@ class CheckoutSessionController {
 			return null;
 		}
 		if ( empty( $session->metadata['order_id'] ) || (int) $session->metadata['order_id'] !== $order->get_id() ) {
+			return null;
+		}
+		// phone_number_collection can't be updated, so a changed order phone needs a new session.
+		if ( ! empty( $session->phone_number_collection->enabled ) !== (bool) $order->get_billing_phone() ) {
 			return null;
 		}
 		$session = $this->update_session_from_order( $session_id, $order );
@@ -766,6 +774,10 @@ class CheckoutSessionController {
 		if ( ! empty( $session->customer_email ) || ! empty( $session->customer ) ) {
 			unset( $billing_details['email'] );
 		}
+		// confirm() rejects `phoneNumber` when the session wasn't created with phone_number_collection.
+		if ( empty( $session->phone_number_collection->enabled ) ) {
+			unset( $billing_details['phone'] );
+		}
 		$args = [
 			'type'            => 'checkout_session',
 			'session_id'      => $session->id,
@@ -882,6 +894,18 @@ class CheckoutSessionController {
 	}
 
 	/**
+	 * Whether the checkout's billing phone field is required.
+	 *
+	 * @return bool
+	 * @since 4.0.20
+	 */
+	private function is_phone_required() {
+		$fields = WC()->checkout()->get_checkout_fields( 'billing' );
+
+		return ! empty( $fields['billing_phone']['required'] );
+	}
+
+	/**
 	 * Protected (not private) so UPMCheckoutSessionController can override it, calling
 	 * parent::get_session_params_from_cart() and adding to the result.
 	 *
@@ -893,9 +917,8 @@ class CheckoutSessionController {
 			'mode'                    => 'payment',
 			'line_items'              => $this->get_line_items_from_cart(),
 			'adaptive_pricing'        => [ 'enabled' => 'true' ],
-			// Lets confirm() accept the phone from WC's billing form. In custom ui_mode this
-			// only permits the session to carry a phone; the element renders no field.
-			'phone_number_collection' => [ 'enabled' => 'true' ],
+			// Stripe requires a phone at confirm() when enabled, so only enable it when WC requires one.
+			'phone_number_collection' => [ 'enabled' => $this->is_phone_required() ? 'true' : 'false' ],
 		];
 		$customer = wc_stripe_get_customer_id();
 		if ( $customer ) {
@@ -951,7 +974,7 @@ class CheckoutSessionController {
 			'mode'                    => 'payment',
 			'line_items'              => $this->get_line_items_from_order( $order ),
 			'adaptive_pricing'        => [ 'enabled' => 'true' ],
-			'phone_number_collection' => [ 'enabled' => 'true' ],
+			'phone_number_collection' => [ 'enabled' => $order->get_billing_phone() ? 'true' : 'false' ],
 			// The order already exists, so bind the session to it from the start rather than
 			// deferring binding to process_payment_result() the way the cart flow has to.
 			'metadata'                => [ 'order_id' => $order->get_id() ],

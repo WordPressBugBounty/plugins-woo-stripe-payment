@@ -15,7 +15,7 @@ abstract class AbstractGateway extends \WC_Payment_Gateway {
 	 */
 	protected $assets;
 	/**
-	 * @var \StripeClient
+	 * @var \PaymentPlugins\Stripe\Client\StripeClient
 	 */
 	public $client;
 	/**
@@ -26,6 +26,14 @@ abstract class AbstractGateway extends \WC_Payment_Gateway {
 	 * @var string
 	 */
 	protected $payment_method_id;
+	/**
+	 * Maximum amount of an off-session charge keyed by currency, e.g. [ 'PLN' => 2000 ].
+	 * Currencies that aren't listed have no limit.
+	 *
+	 * @var array
+	 * @since 4.0.20
+	 */
+	protected $max_off_session_amount = [];
 
 	public function __construct( \WC_Stripe_Payment_Intent $payment_controller, StripeClient $client, AssetsApi $assets ) {
 		$this->payment_controller = $payment_controller;
@@ -141,6 +149,18 @@ abstract class AbstractGateway extends \WC_Payment_Gateway {
 		return $settings->enabled();
 	}
 
+	/**
+	 * @param $product
+	 *
+	 * @return bool
+	 * @since 4.0.20
+	 */
+	public function is_product_message_enabled( $product ) {
+		$settings = new \WC_Stripe_Product_Gateway_Option( $product, $this );
+
+		return $settings->message_enabled();
+	}
+
 	public function is_cart_section_enabled() {
 		return in_array( 'cart', (array) $this->get_option( 'payment_sections', array() ) );
 	}
@@ -174,6 +194,30 @@ abstract class AbstractGateway extends \WC_Payment_Gateway {
 	 */
 	public function set_payment_method_id( $value ) {
 		$this->payment_method_id = $value;
+	}
+
+	/**
+	 * Returns the confirmation token created by stripe.createConfirmationToken(), if any.
+	 *
+	 * @return string
+	 * @since 4.0.20
+	 */
+	public function get_confirmation_token_from_request() {
+		$key = $this->id . '_confirmation_token';
+		//phpcs:disable WordPress.Security.NonceVerification.Missing
+		$token = ! empty( $_POST[ $key ] ) ? \wc_clean( \wp_unslash( $_POST[ $key ] ) ) : '';
+
+		return strpos( $token, 'ctoken_' ) === 0 ? $token : '';
+	}
+
+	/**
+	 * @param string $currency
+	 *
+	 * @return float|null Null if there's no limit for the currency.
+	 * @since 4.0.20
+	 */
+	public function get_max_off_session_amount( $currency ) {
+		return isset( $this->max_off_session_amount[ $currency ] ) ? (float) $this->max_off_session_amount[ $currency ] : null;
 	}
 
 	/**

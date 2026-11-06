@@ -6,7 +6,7 @@ use PaymentPlugins\Stripe\Client\StripeClient;
 
 class DashboardPage extends AbstractAdminPage {
 	/**
-	 * @var \StripeClient
+	 * @var \PaymentPlugins\Stripe\Client\StripeClient
 	 */
 	private $client;
 
