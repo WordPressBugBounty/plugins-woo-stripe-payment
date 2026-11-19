@@ -4,7 +4,7 @@ Tags: stripe, klarna, credit card, apple pay, google pay
 Requires at least: 4.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.0.20
+Stable tag: 4.0.21
 Copyright: Payment Plugins
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,8 @@ If your site is not loading over https, then Stripe won't render the Payment Req
 9. Stripe Link for high conversion
 
 == Changelog ==
+= 4.0.21 - 11/19/26 =
+* [4.0.21 Change Log](https://paymentplugins.com/documentation/stripe/releases/4.0.21/)
 = 4.0.20 - 11/06/26 =
 * [4.0.20 Change Log](https://paymentplugins.com/documentation/stripe/releases/4.0.20/)
 = 4.0.19 - 10/22/26 =

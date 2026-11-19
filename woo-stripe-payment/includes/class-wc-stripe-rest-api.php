@@ -181,13 +181,17 @@ class WC_Stripe_Rest_API {
 		return add_query_arg( 'path', '/' . trim( $path, '/' ), $endpoint );
 	}
 
+	/**
+	 * Return the REST URL for admin requests. WordPress 7.1.5+ no longer serves REST
+	 * requests from admin-ajax.php (WP_ADMIN is defined).
+	 *
+	 * @param string $path
+	 *
+	 * @return string
+	 * @since 4.0.21 - uses get_rest_url() instead of the admin-ajax.php proxy.
+	 */
 	public static function get_admin_endpoint( $path ) {
-		$url = admin_url( 'admin-ajax.php' );
-
-		return add_query_arg( array(
-			'action' => 'wc_stripe_admin_request',
-			'path'   => '/' . trim( $path, '/' )
-		), $url );
+		return get_rest_url( null, '/' . trim( $path, '/' ) );
 	}
 
 }

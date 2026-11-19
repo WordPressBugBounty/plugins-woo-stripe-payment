@@ -426,8 +426,10 @@ class ServiceProvider {
 
 		$this->container->get( PackageRegistry::class )->initialize();
 
+		// Not admin-only: admin REST routes render the settings nav, and is_admin() is false there.
+		\WC_Stripe_Admin_Settings::init();
+
 		if ( is_admin() ) {
-			\WC_Stripe_Admin_Settings::init();
 			\WC_Stripe_Admin_Order_Metaboxes::init();
 			\WC_Stripe_Admin_Product_Edit::init();
 			\WC_Stripe_Admin_User_Edit::init();

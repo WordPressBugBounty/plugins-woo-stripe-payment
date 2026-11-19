@@ -110,6 +110,16 @@ class OrderActions extends AbstractAdminRoute {
 
 	private function process_payment( \WP_REST_Request $request ) {
 		/**
+		 * WC doesn't load the session or cart for REST requests, but the payment flow uses
+		 * notices and the session. The admin-ajax proxy got them via DOING_AJAX.
+		 *
+		 * @since 4.0.21
+		 */
+		if ( function_exists( 'wc_load_cart' ) ) {
+			wc_load_cart();
+		}
+
+		/**
 		 * Unlike the checkout page, this modal doesn't get a fresh page load between attempts, so a notice
 		 * added by a failed attempt (e.g. a decline) would otherwise sit in the WC session and short-circuit
 		 * every subsequent admin payment attempt via the wc_notice_count() guard in
